@@ -38,6 +38,56 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
+const ModelGirlSilhouette = ({ className = "w-10 h-10" }: { className?: string }) => (
+  <svg
+    viewBox="0 0 100 100"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={className}
+  >
+    {/* Elegant minimal line art of a fashionable girl profile */}
+    <path
+      d="M30 75C30 75 32 63 36 55C38 51 41 46 41 40C41 32 36 25 36 18C36 14 38 10 42 8C46 6 52 7 55 10C61 15 63 22 62 30C61 38 56 46 56 55C56 63 58 75 58 75"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Hair volume flow */}
+    <path
+      d="M42 8C35 12 30 20 30 28C30 38 38 42 38 48C38 54 32 60 28 66C24 72 23 80 25 88"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="opacity-80"
+    />
+    {/* Elegant shoulder-neck-collar line */}
+    <path
+      d="M38 55C40 57 44 59 48 59C52 59 55 57 56 55"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    {/* Eyes closed eyelash */}
+    <path
+      d="M45 22C46.5 23 48.5 23 50 22"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    {/* Elegant lips line */}
+    <path
+      d="M47 30C48 31 50 31 51 30"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+    {/* Earring sparkle */}
+    <circle cx="39" cy="36" r="2" fill="currentColor" className="animate-pulse text-amber-400" />
+  </svg>
+);
+
 interface SocialTrendPost {
   id: string;
   platform: "instagram" | "tiktok";
@@ -904,8 +954,8 @@ export default function App() {
       <nav className="w-full bg-white/85 backdrop-blur-md border-b border-rose-100/50 px-4 py-3.5 sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-rose-200/50">
-              <Sparkles className="w-5 h-5 animate-pulse" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-rose-500 to-amber-500 flex items-center justify-center text-white shadow-md shadow-rose-200/50 p-1">
+              <ModelGirlSilhouette className="w-7 h-7 text-white" />
             </div>
             <div>
               <span className="font-black text-rose-950 tracking-tight text-base sm:text-lg block">ማኪ (Maki)</span>
@@ -967,8 +1017,8 @@ export default function App() {
         
         {/* TOP INTERACTIVE BANNER */}
         <div className="bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl shadow-rose-100">
-          <div className="absolute right-0 bottom-0 opacity-15 translate-y-1/4 translate-x-1/4 scale-150 pointer-events-none">
-            <Sparkles className="w-72 h-72" />
+          <div className="absolute right-0 bottom-0 opacity-20 translate-y-6 translate-x-6 pointer-events-none">
+            <ModelGirlSilhouette className="w-72 h-72 text-white" />
           </div>
           <div className="relative z-10 max-w-2xl space-y-4">
             <span className="bg-white/25 backdrop-blur-md text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest text-rose-50 inline-block">
@@ -1542,7 +1592,7 @@ export default function App() {
                     </>
                   ) : (
                     <>
-                      <Sparkles className="w-4 h-4 text-amber-400 fill-amber-400" />
+                      <ModelGirlSilhouette className="w-5 h-5 text-rose-400 animate-pulse" />
                       የእኔን ስታይልና ፀጉር በማኪ አስመርጥ
                     </>
                   )}
@@ -1655,8 +1705,8 @@ export default function App() {
                   </div>
                 ) : (
                   <div className="my-auto flex flex-col items-center text-center space-y-3.5 py-12">
-                    <div className="w-16 h-16 rounded-full bg-rose-50/50 flex items-center justify-center text-rose-400 border border-rose-100/50">
-                      <Sparkles className="w-7 h-7" />
+                    <div className="w-16 h-16 rounded-full bg-rose-50 flex items-center justify-center text-rose-500 border border-rose-100 p-2.5">
+                      <ModelGirlSilhouette className="w-full h-full" />
                     </div>
                     <div className="space-y-1">
                       <h4 className="font-extrabold text-sm text-slate-800">ምስልዎን ያስገቡና ስታይል መምረጫ ይጀምሩ</h4>
