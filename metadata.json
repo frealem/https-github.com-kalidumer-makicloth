@@ -1,0 +1,6 @@
+{
+  "name": "የማኪ የፋሽንና የፀጉር ስታይል አማካሪ",
+  "description": "የእርስዎን ፎቶ በመጫን ለእርስዎ የሚስማማውን ዘመናዊና ባህላዊ አልባሳት እንዲሁም የፀጉር ስታይል በቴሌብር ክፍያ የሚያገኙበት የግል መማክርት (Ethiopian Fashion & Hair Style Recommendation with Telebirr Payment Integration)",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
