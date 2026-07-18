@@ -32,6 +32,22 @@ In the Render Web Service configuration, set the following options:
 
 ---
 
+## ⚡ Troubleshooting: "vite: not found" Build Error
+
+If you encountered a `vite: not found` error during deployment on Render, it is caused by Render having a stale package cache or attempting to use other lock files (such as Bun) without standard NPM dependency mappings.
+
+We have fully resolved this for you by:
+1. Moving all deployment packages (including `vite`, `esbuild`, `tailwindcss`, and `typescript`) directly into **`dependencies`** instead of `devDependencies`. This ensures Render installs them even under `NODE_ENV=production`.
+2. Generating a fresh, official **`package-lock.json`** to lock the dependency tree.
+
+### How to trigger a clean build on Render:
+1. Go to your web service page in the **Render Dashboard**.
+2. Click the **Manual Deploy** button in the top right.
+3. Select **Clear Build Cache & Deploy**.
+4. Render will completely reinstall the fresh packages using `package-lock.json` and build successfully!
+
+---
+
 ## 🔑 Step 3: Configure Environment Variables
 
 Under the **Environment** tab in your Render Web Service, add the following key-value pairs:
