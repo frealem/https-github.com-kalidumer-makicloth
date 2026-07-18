@@ -34,17 +34,18 @@ In the Render Web Service configuration, set the following options:
 
 ## ⚡ Troubleshooting: "vite: not found" Build Error
 
-If you encountered a `vite: not found` error during deployment on Render, it is caused by Render having a stale package cache or attempting to use other lock files (such as Bun) without standard NPM dependency mappings.
+If you encountered a `vite: not found` error during deployment on Render, it is caused by Render attempting to use other lock files (such as Bun) which ignores standard NPM dependency configurations and results in failed package installations.
 
 We have fully resolved this for you by:
-1. Moving all deployment packages (including `vite`, `esbuild`, `tailwindcss`, and `typescript`) directly into **`dependencies`** instead of `devDependencies`. This ensures Render installs them even under `NODE_ENV=production`.
-2. Generating a fresh, official **`package-lock.json`** to lock the dependency tree.
+1. **Removing `bun.lock`**: The old `bun.lock` file has been deleted from the repository. This forces Render to use the standard `npm install` package installer.
+2. **Moving all build dependencies**: Packages like `vite`, `esbuild`, `tailwindcss`, and `typescript` have been moved directly into **`dependencies`** instead of `devDependencies`. This ensures Render installs them even under a `NODE_ENV=production` environment.
+3. **Generating `package-lock.json`**: An official fresh `package-lock.json` is generated to lock down package versions securely.
 
 ### How to trigger a clean build on Render:
 1. Go to your web service page in the **Render Dashboard**.
-2. Click the **Manual Deploy** button in the top right.
+2. Click the **Manual Deploy** button in the top-right corner.
 3. Select **Clear Build Cache & Deploy**.
-4. Render will completely reinstall the fresh packages using `package-lock.json` and build successfully!
+4. Render will now perform a clean `npm install` with your package lock file, compile successfully, and launch without any issues!
 
 ---
 
