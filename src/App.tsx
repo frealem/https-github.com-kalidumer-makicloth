@@ -148,82 +148,83 @@ const socialTrends: SocialTrendPost[] = [
   {
     id: "social-1",
     platform: "instagram",
-    handle: "@mastewal_wendesen",
-    avatar: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=150",
+    handle: "@danayit_mekbib",
+    avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=150",
     image: "/src/assets/images/habesha_kemis_traditional_1784116987366.jpg",
-    likes: "18.4k",
-    comments: "342",
-    tags: ["#habeshakemis", "#ethiopianfashion", "#traditionaldress"],
-    descriptionAmh: "በእጅ የተሸመነ የባህል ቀሚስ ጥበብ ከተስተካከለ ማራኪ ዝርዝሮች ጋር። ለልዩ የሰርግ ፕሮግራሞች እጅግ ተመራጭ የሆነ ድንቅ ስራ።",
-    descriptionEng: "Elegant hand-woven Habesha Kemis with gold-gilded pattern details, perfect for modern Ethiopian weddings.",
+    likes: "45.8k",
+    comments: "1.2k",
+    tags: ["#habeshakemis", "#ethiopianfashion", "#danayitstyle"],
+    descriptionAmh: "በእጅ የተሸመነ እጅግ ማራኪ የባህል ቀሚስ ጥበብ ከተንዠረገገ ሻሽ ጋር። ለልዩ የሰርግ ፕሮግራሞች እጅግ ተመራጭ የሆነ ድንቅ ባህላዊ ስራ።",
+    descriptionEng: "Elegant hand-woven Habesha Kemis with gold-gilded pattern details, worn by famous television host and artist Danayit Mekbib.",
     category: "dress"
   },
   {
     id: "social-2",
     platform: "tiktok",
-    handle: "@addis_barbers",
-    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150",
-    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600",
-    likes: "42.1k",
-    comments: "1.2k",
-    tags: ["#addisfade", "#ethiopianbarber", "#menshaircut"],
-    descriptionAmh: "ወቅታዊ የጎን እቅጭ (Skin Fade) ከከርሊ ዲዛይን ጋር። በወጣቶች ዘንድ አሁን ላይ እጅግ የተወደደ እና ቺክ የሆነ የፀጉር ስታይል።",
-    descriptionEng: "Crispy high skin fade paired with defined texturized curls. The hottest men's haircut trend in Addis Ababa right now.",
-    category: "haircut"
+    handle: "@yordi_tiktoker",
+    avatar: "https://images.unsplash.com/photo-1524250502761-136f25028110?auto=format&fit=crop&q=80&w=150",
+    image: "https://images.unsplash.com/photo-1524250502761-136f25028110?auto=format&fit=crop&q=80&w=600",
+    likes: "182.1k",
+    views: "2.4M",
+    comments: "3.4k",
+    tags: ["#yordistyle", "#ethiopiantiktok", "#bouncycurls"],
+    descriptionAmh: "ወቅታዊ የከተማ ቺክ ዘና ያለ አልባሳት ከደማቅ ፀጉር ከርል ጋር። በ2026 በኢትዮጵያ ወጣቶች ዘንድ እጅግ የተወደደው የዮርዲ ቲክቶክ ተወዳጅ ስታይል።",
+    descriptionEng: "Vibrant urban streetwear and bouncy natural curls style. Inspired by top Ethiopian TikTok star Yordi's viral outfits.",
+    category: "hairstyle"
   },
   {
     id: "social-3",
     platform: "instagram",
-    handle: "@mafimafi_et",
-    avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=150",
-    image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=600",
-    likes: "12.9k",
-    comments: "185",
-    tags: ["#habeshawedding", "#luxuryfashion", "#modernethiopia"],
-    descriptionAmh: "ዘመናዊ የሀበሻ ባህልና የምዕራባውያን ውህደት ያለው አስደናቂ የምሽት እራት አልባሳት። ቀለል ያሉ ጥበቦች የተዋሃዱበት።",
-    descriptionEng: "Stunning fusion evening gown merging ancient hand-weaving aesthetics with high-fashion couture cuts.",
+    handle: "@fryat_yemane",
+    avatar: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=150",
+    image: "/src/assets/images/modern_habesha_dress_1784117000820.jpg",
+    likes: "32.9k",
+    comments: "580",
+    tags: ["#fryatyemane", "#culturalfusion", "#habeshabeauty"],
+    descriptionAmh: "ዘመናዊ የሀበሻ ባህልና የምዕራባውያን ውህደት ያለው አስደናቂ የምሽት እራት አልባሳት። ፍርያት የማነ በልዩ ዝግጅት ላይ ያደመቀችበት የጥበብ ዲዛይን።",
+    descriptionEng: "Stunning cultural fusion gown worn by top actress and model Fryat Yemane, combining hand-woven heritage and luxury couture.",
     category: "dress"
   },
   {
     id: "social-4",
     platform: "tiktok",
-    handle: "@habesha_braids",
-    avatar: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=150",
-    image: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=600",
-    likes: "35.5k",
-    views: "410k",
-    comments: "890",
-    tags: ["#albaso", "#habeshashuruba", "#traditionalbraiding"],
-    descriptionAmh: "ዘመናዊ የአልባሶ ሹሩባ ስታይል። ባህልንና ውበትን አጣምሮ የያዘ፣ ለልዩ በዓላትም ሆነ ለዕለት ተዕለት ውሎ ፍጹም የሚስማማ።",
-    descriptionEng: "Flawless Habesha Albaso (cornrow & crown) braiding style. Celebrating organic heritage with a highly polished modern twist.",
-    category: "hairstyle"
+    handle: "@rophnan_cyber",
+    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150",
+    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600",
+    likes: "95.5k",
+    views: "1.1M",
+    comments: "2.1k",
+    tags: ["#rophnan", "#cyberhabesha", "#afrofuturism"],
+    descriptionAmh: "በእጅ ከተሸመነ ባህላዊ ጥበብ ጋር የተቀናጀ ልዩ የአፍሮ-ፊውቸሪስት ኮት እና ቴክስቸርድ ፀጉር ስታይል። የሙዚቃው ፈር ቀዳጅ ሮፍናን መለያ ምልክት።",
+    descriptionEng: "Dapper tailored cultural-fusion jacket and textured afro dreads/twists, styled by electronic music icon Rophnan.",
+    category: "haircut"
   },
   {
     id: "social-5",
     platform: "instagram",
-    handle: "@yarda_fashion_addis",
-    avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&q=80&w=150",
-    image: "https://images.unsplash.com/photo-1524250502761-136f25028110?auto=format&fit=crop&q=80&w=600",
-    likes: "9.2k",
-    comments: "144",
-    tags: ["#casualsmart", "#addisstreeetwear", "#girlsoutfit"],
-    descriptionAmh: "ለዕለት ተዕለት ውሎ እጅግ ምቹ የሆነ የከተማ ቺክ አልባሳት። በቀጭን ጥጥ የተሰራ፣ ለኢትዮጵያ የአየር ንብረት ፍጹም የሚስማማ።",
-    descriptionEng: "Cozy urban street look tailored with premium lightweight fabrics, optimized for Addis Ababa's moderate climate.",
+    handle: "@hanan_tarq",
+    avatar: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&q=80&w=150",
+    image: "/src/assets/images/modern_casual_style_1784117015193.jpg",
+    likes: "54.2k",
+    comments: "980",
+    tags: ["#hanantarq", "#modestfashion", "#chicaddis"],
+    descriptionAmh: "ለእለት ተእለት ውሎ የሚሆን እጅግ ውብና የረቀቀ የከተማ አልባሳት። በታዋቂዋ ተዋናይት ሃናን ታርቅ የኢንስታግራም ገፅ ላይ ሰፊ መወያያ የሆነ ስማርት ዲዛይን።",
+    descriptionEng: "Sophisticated and modest urban chic clothing designed for modern city events, popularized by legendary actress Hanan Tarq.",
     category: "dress"
   },
   {
     id: "social-6",
     platform: "tiktok",
-    handle: "@ethiopian_cuts",
-    avatar: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=150",
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600",
-    likes: "54.8k",
-    views: "850k",
-    comments: "2.1k",
-    tags: ["#addistrends", "#barbershopconnect", "#freshcut"],
-    descriptionAmh: "ምርጥ የወንዶች ሱፍ አልባሳት ስፌት ከዘመናዊ የፀጉር አቆራረጥ ስታይል ጋር። ለቢሮ ስራ አስፈጻሚዎች የሚስማማ ውህደት።",
-    descriptionEng: "Dapper tailored executive suit matched with clean-cut styling details. Inspiring professional gentlemen across social media.",
-    category: "haircut"
+    handle: "@melat_nebiyu",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150",
+    image: "/src/assets/images/evening_gown_fashion_1784117031845.jpg",
+    likes: "74.8k",
+    views: "920k",
+    comments: "1.4k",
+    tags: ["#melatnebiyu", "#luxurygala", "#eveningcouture"],
+    descriptionAmh: "ክብርንና ማራኪነትን የሚያላብስ ድንቅ የምሽት እራት አልባሳት። በፊልም ኮከቧ መላት ነቢዩ ቲክቶክ ላይ የታየ ልዩ የመድረክ ቀሚስ።",
+    descriptionEng: "Breathtaking premium evening gala dress featured on TikTok by prominent cinema icon and style star Melat Nebiyu.",
+    category: "dress"
   }
 ];
 
@@ -490,16 +491,14 @@ export default function App() {
     return () => clearInterval(interval);
   }, [audioPlaying]);
 
-  // Audio volume controller trigger
-  const handleVolumeChange = (newVol: number) => {
-    const clamped = Math.max(0, Math.min(1, parseFloat(newVol.toFixed(2))));
-    setVolume(clamped);
-    if (synthRef.current) {
-      synthRef.current.setVolume(clamped);
-    }
+  const toggleFavorite = (id: string) => {
+    setFavorites((prev) => {
+      const updated = prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id];
+      localStorage.setItem("clothing_app_favs", JSON.stringify(updated));
+      return updated;
+    });
   };
 
-  // Toggle voice playback
   const toggleAudio = () => {
     if (audioPlaying) {
       if (synthRef.current) {
@@ -514,28 +513,23 @@ export default function App() {
     }
   };
 
-  // Toggle favorite style
-  const toggleFavorite = (id: string) => {
-    let updated;
-    if (favorites.includes(id)) {
-      updated = favorites.filter(f => f !== id);
-    } else {
-      updated = [...favorites, id];
+  const handleVolumeChange = (val: number) => {
+    setVolume(val);
+    if (synthRef.current) {
+      synthRef.current.setVolume(val);
     }
-    setFavorites(updated);
-    localStorage.setItem("clothing_app_favs", JSON.stringify(updated));
   };
 
   // Curated clothing designs with high quality model images for Men & Women
   const clothingStyles: ClothingStyle[] = [
     {
       id: "style-1",
-      name: "ባህላዊ የሀበሻ ቀሚስ - Inspired by @Mastewal_Wendesen on Instagram",
+      name: "ባህላዊ የሀበሻ ቀሚስ - Inspired by @danayit_mekbib on Instagram",
       englishName: "Classic Hand-woven Habesha Gown",
       category: "traditional",
       gender: "female",
       image: "/src/assets/images/habesha_kemis_traditional_1784116987366.jpg",
-      description: "በጥንቃቄ በእጅ የተሸመነ፣ ውብና ደማቅ ጥበብ ያለበት የሀበሻ ባህላዊ ቀሚስ። በታዋቂዋ ዲዛይነር ማስቴዋል ወንድሰን የኢንስታግራም ገፅ ላይ ሰፊ እውቅና ያገኘው ይህ ልዩ አልባሳት ለሰርግ、ለልደትና ለባህላዊ በዓላት ፍጹም ምርጫ ነው። የሴቶችን ውበትና ኢትዮጵያዊ ክብር በላቀ ሁኔታ ያጎላል።",
+      description: "በጥንቃቄ በእጅ የተሸመነ፣ ውብና ደማቅ ጥበብ ያለበት የሀበሻ ባህላዊ ቀሚስ። በታዋቂዋ ዲዛይነር እና አርቲስት ዳናይት መክቢብ የኢንስታግራም ገፅ ላይ ሰፊ እውቅና ያገኘው ይህ ልዩ አልባሳት ለሰርግ、ለልደትና ለባህላዊ በዓላት ፍጹም ምርጫ ነው። የሴቶችን ውበትና ኢትዮጵያዊ ክብር በላቀ ሁኔታ ያጎላል።",
       priceRange: "4,500 - 12,000 ETB",
       rating: 4.9,
       likes: "4.8k",
@@ -544,12 +538,12 @@ export default function App() {
     },
     {
       id: "style-2",
-      name: "ዘመናዊ የባህልና የፋሽን ውህደት - Inspired by @MafiMafi on TikTok",
+      name: "ዘመናዊ የባህልና የፋሽን ውህደት - Inspired by @fryat_yemane on TikTok",
       englishName: "Modern Cultural Fusion Gown",
       category: "fusion",
       gender: "female",
       image: "/src/assets/images/modern_habesha_dress_1784117000820.jpg",
-      description: "የባህልና የዘመናዊ ፋሽን ድንቅ ጥምረት! በታዋቂዋ ማፊ ማፊ የቲክቶክና የኢንስታግራም ገፆች ላይ ታይቶ በሚሊዮን የሚቆጠሩ እይታዎችን ያገኘው ይህ ቀሚስ ከባህላዊ የሽመና ጥበብ ጋር ተዋህዶ በዘመናዊ ዲዛይን የተሰፋ የምሽት አልባሳት ነው። ለልዩ ግብዣዎች、ለዘመናዊ ሰርግ እና ለደማቅ ዝግጅቶች እጅግ ተስማሚ ነው።",
+      description: "የባህልና የዘመናዊ ፋሽን ድንቅ ጥምረት! በታዋቂዋ ፍርያት የማነ የቲክቶክና የኢንስታግራም ገፆች ላይ ታይቶ በሚሊዮን የሚቆጠሩ እይታዎችን ያገኘው ይህ ቀሚስ ከባህላዊ የሽመና ጥበብ ጋር ተዋህዶ በዘመናዊ ዲዛይን የተሰፋ የምሽት አልባሳት ነው። ለልዩ ግብዣዎች、ለዘመናዊ ሰርግ እና ለደማቅ ዝግጅቶች እጅግ ተስማሚ ነው።",
       priceRange: "6,000 - 15,500 ETB",
       rating: 4.8,
       likes: "3.2k",
@@ -558,12 +552,12 @@ export default function App() {
     },
     {
       id: "style-3",
-      name: "ዘመናዊ የከተማ ቺክ አልባሳት - Curated from Yarda Fashion on TikTok",
+      name: "ዘመናዊ የከተማ ቺክ አልባሳት - Curated from @yordi_tiktoker on TikTok",
       englishName: "Contemporary Urban Streetwear",
       category: "modern",
       gender: "female",
       image: "/src/assets/images/modern_casual_style_1784117015193.jpg",
-      description: "ዘመናዊ፣ ምቹ እና ማራኪ የዕለት ተዕለት የከተማ አልባሳት። በያርዳ ፋሽን ቲክቶክ ቪዲዮዎች ላይ የተዋወቀው ይህ ስታይል ለስራ、ለትምህርት ቤት ወይም ለጓደኛ መገናኛዎች እጅግ ምቹ ነው። በቀላሉ ከጫማ እና ከኪስ ቦርሳ ጋር የሚቀናጅ ልዩ ዲዛይን ነው።",
+      description: "ዘመናዊ፣ ምቹ እና ማራኪ የዕለት ተዕለት የከተማ አልባሳት። በያርዳና በዮርዲ ቲክቶክ ቪዲዮዎች ላይ የተዋወቀው ይህ ስታይል ለስራ、ለትምህርት ቤት ወይም ለጓደኛ መገናኛዎች እጅግ ምቹ ነው። በቀላሉ ከጫማ እና ከኪስ ቦርሳ ጋር የሚቀናጅ ልዩ ዲዛይን ነው።",
       priceRange: "2,800 - 6,500 ETB",
       rating: 4.7,
       likes: "2.4k",
@@ -572,12 +566,12 @@ export default function App() {
     },
     {
       id: "style-4",
-      name: "የምሽት ማራኪ የራት ቀሚስ - Inspired by Addis Luxury Boutiques",
+      name: "የምሽት ማራኪ የራት ቀሚስ - Inspired by @melat_nebiyu on Instagram",
       englishName: "Glamorous Evening Dinner Gown",
       category: "evening",
       gender: "female",
       image: "/src/assets/images/evening_gown_fashion_1784117031845.jpg",
-      description: "ክብርን እና ውበትን የሚያላብስ ድንቅ የምሽት እራት ቀሚስ። በአዲስ አበባ በቅንጦት የኢንስታግራም ገፆች ላይ በስፋት የታየ ሲሆን ከሐርና ከሳቲን የተሰራ፣ በደማቅ ቀለማትና በረቂቅ ዲዛይን የተዋበ ነው። ለትላልቅ የራት ግብዣዎችና ለኮክቴል ፓርቲዎች ተመራጭ ነው።",
+      description: "ክብርን እና ውበትን የሚያላብስ ድንቅ የምሽት እራት ቀሚስ። በታዋቂዋ ተዋናይት መላት ነቢዩ የኢንስታግራም ገፆች ላይ በስፋት የታየ ሲሆን ከሐርና ከሳቲን የተሰራ፣ በደማቅ ቀለማትና በረቂቅ ዲዛይን የተዋበ ነው። ለትላልቅ የራት ግብዣዎችና ለኮክቴል ፓርቲዎች ተመራጭ ነው።",
       priceRange: "5,500 - 13,000 ETB",
       rating: 4.9,
       likes: "1.9k",
@@ -586,12 +580,12 @@ export default function App() {
     },
     {
       id: "hair-1",
-      name: "ባህላዊ የአልባሶ ሹሩባ - Inspired by @Addis_Hair_Styles on Instagram",
+      name: "ባህላዊ የአልባሶ ሹሩባ - Inspired by @hanan_tarq on Instagram",
       englishName: "Habesha Albaso Traditional Braiding",
       category: "hairstyles",
       gender: "female",
       image: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=600",
-      description: "በቲክቶክ ፋሽን አድናቂዎችና በታዋቂ አርቲስቶች ዘንድ እጅግ የተወደደው የሀበሻ ባህላዊ የአልባሶ (ቁንጮ) ሹሩባ ስታይል። ለልዩ ባህላዊ በዓላት፣ ለሰርግና ለክብር ግብዣዎች ምርጥ ውበትን ያጎናፅፋል።",
+      description: "በቲክቶክ ፋሽን አድናቂዎችና በታዋቂዋ ተዋናይት ሃናን ታርቅ ዘንድ እጅግ የተወደደው የሀበሻ ባህላዊ የአልባሶ (ቁንጮ) ሹሩባ ስታይል። ለልዩ ባህላዊ በዓላት፣ ለሰርግና ለክብር ግብዣዎች ምርጥ ውበትን ያጎናፅፋል።",
       priceRange: "1,500 - 3,500 ETB",
       rating: 4.9,
       likes: "3.7k",
@@ -600,12 +594,12 @@ export default function App() {
     },
     {
       id: "hair-2",
-      name: "ዘመናዊ አፍሮ ከርል ፀጉር ዲዛይን - Curated from @AddisBarber on Instagram",
+      name: "ዘመናዊ አፍሮ ከርል ፀጉር ዲዛይን - Curated from @abenezer_styles on TikTok",
       englishName: "Modern Afro Curl & Fade",
       category: "hairstyles",
       gender: "male",
       image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600",
-      description: "በቲክቶክ ፋሽን አድናቂ ወጣቶች ዘንድ እጅግ ተወዳጅ የሆነ፣ ለወንዶች የሚስማማ ዘመናዊ የፀጉር ከርልና የጎን እቅጭ (Fade) ስታይል። ለዕለት ተዕለት ቺክ እና ለዘመናዊ መልክ ምርጥ ምርጫ ነው።",
+      description: "በቲክቶክ ፋሽን አድናቂ ወጣቶችና በታዋቂው የወንድ ሞዴል አቤኔዘር ዘንድ እጅግ ተወዳጅ የሆነ፣ ለወንዶች የሚስማማ ዘመናዊ የፀጉር ከርልና የጎን እቅጭ (Fade) ስታይል። ለዕለት ተዕለት ቺክ እና ለዘመናዊ መልክ ምርጥ ምርጫ ነው።",
       priceRange: "500 - 1,200 ETB",
       rating: 4.8,
       likes: "1.5k",
@@ -614,17 +608,45 @@ export default function App() {
     },
     {
       id: "hair-3",
-      name: "ዘመናዊ የሴቶች የተፈጥሮ ፀጉር ስታይል - TikTok Sensation",
+      name: "ዘመናዊ የሴቶች የተፈጥሮ ፀጉር ስታይል - Inspired by @eyerus_dancer on TikTok",
       englishName: "Modern Black Natural Styling",
       category: "hairstyles",
       gender: "female",
       image: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=600",
-      description: "በአሁኑ ሰዓት በኢንስታግራም እና ቲክቶክ እጅግ ተወዳጅ የሆነ፣ ምቹ、ዘመናዊና የተፈጥሮ ፀጉርን ውበት የሚያጎላ የሴቶች የተፈጥሮ ፀጉር አሰራር ስታይል በAddis Beauty Studio የተዘጋጀ።",
+      description: "በአሁኑ ሰዓት በቲክቶክ ላይ በዳንሰኛዋ እየሩስ ተወዳጅ የሆነው፣ ምቹ、ዘመናዊና የተፈጥሮ ፀጉርን ውበት የሚያጎላ የሴቶች የተፈጥሮ ፀጉር አሰራር ስታይል በAddis Beauty Studio የተዘጋጀ።",
       priceRange: "1,000 - 2,500 ETB",
       rating: 4.7,
       likes: "2.8k",
       fabric: "የተፈጥሮ ፀጉር እንክብካቤ (Natural Texturized Haircut)",
       occasions: "ለቢሮ、ለዕለት ተዕለት ቺክ、ለስብሰባዎች"
+    },
+    {
+      id: "style-5",
+      name: "ባህላዊ የሰንበት አልባሳት - Inspired by @selam_tesfaye on Instagram",
+      englishName: "Casual Sunday Traditional Wear",
+      category: "traditional",
+      gender: "female",
+      image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600",
+      description: "በታዋቂዋ ሰላም ተስፋዬ የኢንስታግራም ገፅ ላይ የተስተዋወቀው የቤተሰብ መሰብሰቢያ የሚሆን ቀለል ያለ የጥበብ አልባሳት። ክብደቱ ቀላል በመሆኑ ለረጅም ሰዓታት ለመልበስ እጅግ ምቹ ነው፤ ውበትንና ባህልን በአንድነት ያጣምራል።",
+      priceRange: "3,200 - 5,500 ETB",
+      rating: 4.6,
+      likes: "740",
+      fabric: "ቀጭን የሽመና ጥጥ (Light Ethiopian Cotton Yarn)",
+      occasions: "ለእሁድ ፕሮግራሞች、ለቤት ውስጥ ስብሰባዎች、ለቅዳሜ ገበያ"
+    },
+    {
+      id: "style-6",
+      name: "ወቅታዊ የቢሮና ስራ አስፈጻሚ አልባሳት - Professional Corporate Look",
+      englishName: "Modern Executive Workwear Suit",
+      category: "modern",
+      gender: "female",
+      image: "https://images.unsplash.com/photo-1524250502761-136f25028110?auto=format&fit=crop&q=80&w=600",
+      description: "ለዘመናዊ የስራ ሴቶች የተዘጋጀ ሳቢና ባለሙያነትን የሚያሳይ የቢሮ አልባሳት። ምቹ፣ በራስ መተማመንን የሚጨምር እና በስራ ቦታ ልዩ ውበትን የሚሰጥ ዘመናዊ ስታይል ነው።",
+      priceRange: "3,800 - 7,000 ETB",
+      rating: 4.8,
+      likes: "610",
+      fabric: "ተለጣጭ ፖሊ-ቪስኮስ (Structured Poly-Viscose Blend)",
+      occasions: "ለስራ ስብሰባዎች、ለቢሮ ውሎ、ለንግድ ጉዞዎች"
     },
     {
       id: "style-m1",
@@ -667,34 +689,6 @@ export default function App() {
       likes: "812",
       fabric: "ፕሪሚየም ጥጥ (Soft Denim & Cotton Blend)",
       occasions: "ለእለት ተእለት መውጫ、ለቅዳሜ እረፍት、ለጓደኞች ስብሰባ"
-    },
-    {
-      id: "style-5",
-      name: "የቀላል ባህል ቀሚስ (ቀለል ያለ የጥበብ አልባሳት)",
-      englishName: "Lightweight Traditional Casual",
-      category: "traditional",
-      gender: "female",
-      image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600",
-      description: "ለቀላል ቀናትና ለቤተሰብ መሰብሰቢያ የሚሆን ቀለል ያለ የጥበብ አልባሳት። ክብደቱ ቀላል በመሆኑ ለረጅም ሰዓታት ለመልበስ እጅግ ምቹ ነው፤ ውበትንና ባህልን በአንድነት ያጣምраል።",
-      priceRange: "3,200 - 5,500 ETB",
-      rating: 4.6,
-      likes: "740",
-      fabric: "ቀጭን የሽመና ጥጥ (Light Ethiopian Cotton Yarn)",
-      occasions: "ለእሁድ ፕሮግራሞች、ለቤት ውስጥ ስብሰባዎች、ለቅዳሜ ገበያ"
-    },
-    {
-      id: "style-6",
-      name: "ወቅታዊ የቢሮና ስራ አስፈጻሚ አልባሳት",
-      englishName: "Modern Executive Workwear Suit",
-      category: "modern",
-      gender: "female",
-      image: "https://images.unsplash.com/photo-1524250502761-136f25028110?auto=format&fit=crop&q=80&w=600",
-      description: "ለዘመናዊ የስራ ሴቶች የተዘጋጀ ሳቢና ባለሙያነትን የሚያሳይ የቢሮ አልባሳት። ምቹ፣ በራስ መተማመንን የሚጨምር እና በስራ ቦታ ልዩ ውበትን የሚሰጥ ዘመናዊ ስታይል ነው።",
-      priceRange: "3,800 - 7,000 ETB",
-      rating: 4.8,
-      likes: "610",
-      fabric: "ተለጣጭ ፖሊ-ቪስኮስ (Structured Poly-Viscose Blend)",
-      occasions: "ለስራ ስብሰባዎች、ለቢሮ ውሎ、ለንግድ ጉዞዎች"
     }
   ];
 
