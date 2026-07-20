@@ -34,9 +34,16 @@ import {
   Award,
   RefreshCw,
   Sparkle,
-  Instagram
+  Instagram,
+  Briefcase,
+  Moon
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+
+import habeshaKemisImg from "./assets/images/habesha_kemis_traditional_1784116987366.jpg";
+import modernHabeshaImg from "./assets/images/modern_habesha_dress_1784117000820.jpg";
+import modernCasualImg from "./assets/images/modern_casual_style_1784117015193.jpg";
+import eveningGownImg from "./assets/images/evening_gown_fashion_1784117031845.jpg";
 
 const ModelGirlSilhouette = ({ className = "w-10 h-10" }: { className?: string }) => (
   <svg
@@ -150,7 +157,7 @@ const socialTrends: SocialTrendPost[] = [
     platform: "instagram",
     handle: "@danayit_mekbib",
     avatar: "https://images.unsplash.com/photo-1531123897727-8f129e1688ce?auto=format&fit=crop&q=80&w=150",
-    image: "/src/assets/images/habesha_kemis_traditional_1784116987366.jpg",
+    image: habeshaKemisImg,
     likes: "45.8k",
     comments: "1.2k",
     tags: ["#habeshakemis", "#ethiopianfashion", "#danayitstyle"],
@@ -177,7 +184,7 @@ const socialTrends: SocialTrendPost[] = [
     platform: "instagram",
     handle: "@fryat_yemane",
     avatar: "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=150",
-    image: "/src/assets/images/modern_habesha_dress_1784117000820.jpg",
+    image: modernHabeshaImg,
     likes: "32.9k",
     comments: "580",
     tags: ["#fryatyemane", "#culturalfusion", "#habeshabeauty"],
@@ -204,7 +211,7 @@ const socialTrends: SocialTrendPost[] = [
     platform: "instagram",
     handle: "@hanan_tarq",
     avatar: "https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?auto=format&fit=crop&q=80&w=150",
-    image: "/src/assets/images/modern_casual_style_1784117015193.jpg",
+    image: modernCasualImg,
     likes: "54.2k",
     comments: "980",
     tags: ["#hanantarq", "#modestfashion", "#chicaddis"],
@@ -217,7 +224,7 @@ const socialTrends: SocialTrendPost[] = [
     platform: "tiktok",
     handle: "@melat_nebiyu",
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=150",
-    image: "/src/assets/images/evening_gown_fashion_1784117031845.jpg",
+    image: eveningGownImg,
     likes: "74.8k",
     views: "920k",
     comments: "1.4k",
@@ -483,10 +490,8 @@ export default function App() {
     let interval: any;
     if (audioPlaying) {
       interval = setInterval(() => {
-        setWaveHeights(prev => prev.map(() => Math.floor(Math.random() * 55) + 10));
-      }, 120);
-    } else {
-      setWaveHeights([10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10]);
+        setWaveHeights(prev => prev.map(() => Math.floor(Math.random() * 45) + 10));
+      }, 150);
     }
     return () => clearInterval(interval);
   }, [audioPlaying]);
@@ -528,7 +533,7 @@ export default function App() {
       englishName: "Classic Hand-woven Habesha Gown",
       category: "traditional",
       gender: "female",
-      image: "/src/assets/images/habesha_kemis_traditional_1784116987366.jpg",
+      image: habeshaKemisImg,
       description: "በጥንቃቄ በእጅ የተሸመነ፣ ውብና ደማቅ ጥበብ ያለበት የሀበሻ ባህላዊ ቀሚስ። በታዋቂዋ ዲዛይነር እና አርቲስት ዳናይት መክቢብ የኢንስታግራም ገፅ ላይ ሰፊ እውቅና ያገኘው ይህ ልዩ አልባሳት ለሰርግ、ለልደትና ለባህላዊ በዓላት ፍጹም ምርጫ ነው። የሴቶችን ውበትና ኢትዮጵያዊ ክብር በላቀ ሁኔታ ያጎላል።",
       priceRange: "4,500 - 12,000 ETB",
       rating: 4.9,
@@ -542,7 +547,7 @@ export default function App() {
       englishName: "Modern Cultural Fusion Gown",
       category: "fusion",
       gender: "female",
-      image: "/src/assets/images/modern_habesha_dress_1784117000820.jpg",
+      image: modernHabeshaImg,
       description: "የባህልና የዘመናዊ ፋሽን ድንቅ ጥምረት! በታዋቂዋ ፍርያት የማነ የቲክቶክና የኢንስታግራም ገፆች ላይ ታይቶ በሚሊዮን የሚቆጠሩ እይታዎችን ያገኘው ይህ ቀሚስ ከባህላዊ የሽመና ጥበብ ጋር ተዋህዶ በዘመናዊ ዲዛይን የተሰፋ የምሽት አልባሳት ነው። ለልዩ ግብዣዎች、ለዘመናዊ ሰርግ እና ለደማቅ ዝግጅቶች እጅግ ተስማሚ ነው።",
       priceRange: "6,000 - 15,500 ETB",
       rating: 4.8,
@@ -556,7 +561,7 @@ export default function App() {
       englishName: "Contemporary Urban Streetwear",
       category: "modern",
       gender: "female",
-      image: "/src/assets/images/modern_casual_style_1784117015193.jpg",
+      image: modernCasualImg,
       description: "ዘመናዊ፣ ምቹ እና ማራኪ የዕለት ተዕለት የከተማ አልባሳት። በያርዳና በዮርዲ ቲክቶክ ቪዲዮዎች ላይ የተዋወቀው ይህ ስታይል ለስራ、ለትምህርት ቤት ወይም ለጓደኛ መገናኛዎች እጅግ ምቹ ነው። በቀላሉ ከጫማ እና ከኪስ ቦርሳ ጋር የሚቀናጅ ልዩ ዲዛይን ነው።",
       priceRange: "2,800 - 6,500 ETB",
       rating: 4.7,
@@ -570,7 +575,7 @@ export default function App() {
       englishName: "Glamorous Evening Dinner Gown",
       category: "evening",
       gender: "female",
-      image: "/src/assets/images/evening_gown_fashion_1784117031845.jpg",
+      image: eveningGownImg,
       description: "ክብርን እና ውበትን የሚያላብስ ድንቅ የምሽት እራት ቀሚስ። በታዋቂዋ ተዋናይት መላት ነቢዩ የኢንስታግራም ገፆች ላይ በስፋት የታየ ሲሆን ከሐርና ከሳቲን የተሰራ፣ በደማቅ ቀለማትና በረቂቅ ዲዛይን የተዋበ ነው። ለትላልቅ የራት ግብዣዎችና ለኮክቴል ፓርቲዎች ተመራጭ ነው።",
       priceRange: "5,500 - 13,000 ETB",
       rating: 4.9,
@@ -618,7 +623,7 @@ export default function App() {
       rating: 4.7,
       likes: "2.8k",
       fabric: "የተፈጥሮ ፀጉር እንክብካቤ (Natural Texturized Haircut)",
-      occasions: "ለቢሮ、ለዕለት ተዕለት ቺክ、ለስብሰባዎች"
+      occasions: "ለቢሮ、ለዕለት ተዕለት ቺክ、ለስابقةዎች"
     },
     {
       id: "style-5",
@@ -689,6 +694,48 @@ export default function App() {
       likes: "812",
       fabric: "ፕሪሚየም ጥጥ (Soft Denim & Cotton Blend)",
       occasions: "ለእለት ተእለት መውጫ、ለቅዳሜ እረፍት、ለጓደኞች ስብሰባ"
+    },
+    {
+      id: "style-m4",
+      name: "ልከኛ የሙስሊም አልባሳት - በኢትዮጵያ ባህላዊ ጥበብ የተዋበ አባያ (ለሴቶች)",
+      englishName: "Elegant Islamic Abaya with Habesha Embroidery",
+      category: "fusion",
+      gender: "female",
+      image: "https://images.unsplash.com/photo-1609357605129-26f69add5d6e?auto=format&fit=crop&q=80&w=600",
+      description: "የኢትዮጵያን ባህላዊ በእጅ የተሸመነ የጥበብ ጌጣጌጥ ከረቂቅና ልከኛ እስላማዊ አባያ (Abaya) ጋር ያዋሃደ ድንቅ ስራ። ለጁምዓ ጸሎት፣ ለዒድ በዓልና ለተለያዩ ትላልቅ የቤተሰብ ፕሮግራሞች ፍጹም የሆነ የውበት መገለጫ ነው።",
+      priceRange: "4,200 - 9,500 ETB",
+      rating: 4.9,
+      likes: "1.4k",
+      fabric: "የተመረጠ የሳውዲ ሐር ከሀገር በቀል ጥበብ ጋር (Saudi Silk with Hand-woven Borders)",
+      occasions: "ለጁምዓ ጸሎት、ለዒድ በዓላት、ለእለት ተእለት ልከኛ ፋሽን"
+    },
+    {
+      id: "style-m5",
+      name: "ወቅታዊ የሙስሊም ወንዶች ስማርት ጀለቢያና ካፍታን",
+      englishName: "Modern Men's Islamic Jalabiya & Kaftan Set",
+      category: "fusion",
+      gender: "male",
+      image: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&q=80&w=600",
+      description: "ለዘመናዊ ሙስሊም ወንዶች የተዘጋጀ፣ በረቂቅ ጥልፍ የተሸለመ ነጭ ጀለቢያ። ለዒድ በዓል፣ ለጁምዓ ሰላትና ለክብረ በዓል ግብዣዎች ሙሉ በራስ መተማመንን የሚያላብስ ድንቅና ክቡር ዲዛይን።",
+      priceRange: "3,800 - 8,500 ETB",
+      rating: 4.8,
+      likes: "945",
+      fabric: "ፕሪሚየም ቀጭን ሌንን (Premium Fine Linen)",
+      occasions: "ለዒድ በዓል、ለጁምዓ ጸሎት、ለቤተሰብ ዝግጅቶች"
+    },
+    {
+      id: "style-m6",
+      name: "ባህላዊ የገናና ጥምቀት የነጠላ ስብስብ",
+      englishName: "Festive Habesha Gown with Orthodox Netela",
+      category: "traditional",
+      gender: "female",
+      image: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80&w=600",
+      description: "ለንጹህ የኦርቶዶክስ ተዋህዶ በዓላት (ጥምቀት፣ ፋሲካ፣ ገና) እና ለሰንበት ቤተክርስቲያን መርሃ-ግብሮች የተዘጋጀ ደማቅ የሀበሻ ቀሚስ። ባለ ጥልፍ ጥበቡ እና በንጽህና የተሸመነው ረጅም ነጠላ ልዩ መንፈሳዊ ሞገስን ይሰጣል።",
+      priceRange: "5,000 - 14,000 ETB",
+      rating: 4.9,
+      likes: "2.1k",
+      fabric: "የባህል ድርብ ድር ሽመና ጥጥ (Premium Double-thread Ethiopian Cotton)",
+      occasions: "ለጥምቀት በዓል、ለገና በዓል、ለሰንበት ቅዳሴ"
     }
   ];
 
@@ -1045,8 +1092,162 @@ export default function App() {
 
         {/* VIEW 1: HOME CATALOGUE / CURATED SHOWCASE */}
         {activeTab === "home" && (
-          <div className="space-y-6">
+          <div className="space-y-8">
             
+            {/* WHY CHOOSE MAKI & DAILY OUTFIT PLANNER BENTO */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
+              
+              {/* Left Column: Why Choose Maki (Impact Section) */}
+              <div className="lg:col-span-5 bg-gradient-to-br from-rose-50/50 to-amber-50/30 rounded-3xl p-6 border border-rose-100/40 flex flex-col justify-between gap-6">
+                <div className="space-y-4">
+                  <div className="inline-flex items-center gap-2 px-3 py-1 bg-rose-100/50 text-rose-700 text-xs font-bold rounded-full">
+                    <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                    ለምን የማኪ ስታይል መማክርት?
+                  </div>
+                  <h3 className="text-xl font-black text-rose-950 leading-snug">
+                    ለዕለት ተዕለት ኑሮዎና በዓላትዎ የተዘጋጀ ልዩ የኢትዮጵያውያን መመሪያ
+                  </h3>
+                  <p className="text-xs text-slate-600 leading-relaxed">
+                    የማኪ ስታይል አማካሪ መተግበሪያ በኢትዮጵያ ውስጥ የመጀመሪያው በምስል ንባብ (Gemini API) የታገዘ የስታይል መማክርት ነው። ቀንዎን በራስ መተማመን እንዲጀምሩ፣ በስራ ቦታዎ ብቁና ዘመናዊ ሆነው እንዲታዩ እንዲሁም ለሃይማኖታዊ በዓላት ተገቢውን ባህላዊ ክብር እንዲያላብሱ ይረዳዎታል።
+                  </p>
+                  
+                  {/* Key Benefits List */}
+                  <div className="space-y-2.5 pt-2">
+                    <div className="flex gap-2.5 items-start">
+                      <div className="p-1 bg-emerald-50 text-emerald-600 rounded-lg mt-0.5">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                      <div>
+                        <h4 className="text-[11px] font-bold text-slate-800">ለሁሉም እምነትና ባህል ተስማሚ</h4>
+                        <p className="text-[10px] text-slate-500">የኦርቶዶክስ ባህላዊ የጥጥ አልባሳት (ነጠላ) እና የሙስሊም ልከኛ ፋሽኖች (አባያ፣ ጀለቢያ) ሙሉ ስብስብ።</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex gap-2.5 items-start">
+                      <div className="p-1 bg-emerald-50 text-emerald-600 rounded-lg mt-0.5">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                      <div>
+                        <h4 className="text-[11px] font-bold text-slate-800">ዕለታዊ የመውጫ እቅድ አውጪ</h4>
+                        <p className="text-[10px] text-slate-500">ከስራ መግባት በፊት፣ ለጁምዓ ሰላት፣ ለእሁድ መርሃ-ግብር ወይም ለሰርግ የሚስማማውን አልባሳት በአንድ ጠቅታ ይለዩ።</p>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2.5 items-start">
+                      <div className="p-1 bg-emerald-50 text-emerald-600 rounded-lg mt-0.5">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                      <div>
+                        <h4 className="text-[11px] font-bold text-slate-800">በቴሌብር ፈጣን ክፍያ የተዘጋጀ</h4>
+                        <p className="text-[10px] text-slate-500">ማንኛውንም የስታይል መቃኛና ትንተና ፈጣን በሆነውና ባላችሁበት ቦታ ሆነው በቴሌብር ክፍያ ያግኙ።</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Right Column: Interactive Daily Occasion Planner */}
+              <div className="lg:col-span-7 bg-white rounded-3xl p-6 border border-slate-100 shadow-sm flex flex-col justify-between gap-4">
+                <div>
+                  <div className="flex items-center justify-between gap-4 border-b border-slate-50 pb-3">
+                    <div>
+                      <h3 className="text-base font-black text-slate-900 flex items-center gap-1.5">
+                        <Calendar className="w-4 h-4 text-rose-500" />
+                        የዛሬው የስታይል ዕቅድ አውጪ (Occasion Planner)
+                      </h3>
+                      <p className="text-[11px] text-slate-500">የሚሄዱበትን መርሃ-ግብር ይምረጡና የሚስማማዎትን ዲዛይን ይመልከቱ</p>
+                    </div>
+                  </div>
+
+                  {/* Scenarios Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+                    <button
+                      onClick={() => {
+                        setActiveGenderFilter("all");
+                        setActiveCategoryFilter("modern");
+                        setHomeSubTab("showcase");
+                      }}
+                      className="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-100 hover:border-rose-200 hover:bg-rose-50/20 text-left transition-all group"
+                    >
+                      <div className="p-2.5 bg-rose-50 text-rose-600 rounded-xl group-hover:bg-rose-500 group-hover:text-white transition-colors">
+                        <Briefcase className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-xs font-extrabold text-slate-800 group-hover:text-rose-700 transition-colors">ሥራና ዕለታዊ ቢሮ (Office)</span>
+                        <p className="text-[9px] text-slate-400">ለስብሰባ፣ ለድርጅት ስራና ለሙያዊ እይታ የሚስማሙ ምቹ ዘመናዊ ልብሶች</p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setActiveGenderFilter("all");
+                        setActiveCategoryFilter("fusion");
+                        setHomeSubTab("showcase");
+                      }}
+                      className="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-100 hover:border-amber-200 hover:bg-amber-50/20 text-left transition-all group"
+                    >
+                      <div className="p-2.5 bg-amber-50 text-amber-600 rounded-xl group-hover:bg-amber-500 group-hover:text-white transition-colors">
+                        <Moon className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-xs font-extrabold text-slate-800 group-hover:text-amber-700 transition-colors">የጁምዓና እስልምና በዓላት (Islamic)</span>
+                        <p className="text-[9px] text-slate-400">ለጁምዓ ጸሎትና ለዒድ በዓላት የሚሆኑ በእጅ ጥልፍ ያሸበረቁ አባያና ጀለቢያዎች</p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setActiveGenderFilter("female");
+                        setActiveCategoryFilter("traditional");
+                        setHomeSubTab("showcase");
+                      }}
+                      className="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-100 hover:border-sky-200 hover:bg-sky-50/20 text-left transition-all group"
+                    >
+                      <div className="p-2.5 bg-sky-50 text-sky-600 rounded-xl group-hover:bg-sky-500 group-hover:text-white transition-colors">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-xs font-extrabold text-slate-800 group-hover:text-sky-700 transition-colors">የኦርቶዶክስ ክብረ-በዓላት (Orthodox)</span>
+                        <p className="text-[9px] text-slate-400">ለጥምቀት፣ ለገናና ለቅዳሴ የሚሆኑ ደማቅ የሀበሻ ቀሚሶች ከነጠላ ጋር</p>
+                      </div>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setActiveGenderFilter("all");
+                        setActiveCategoryFilter("all");
+                        setHomeSubTab("showcase");
+                      }}
+                      className="flex items-start gap-3 p-3.5 rounded-2xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/20 text-left transition-all group"
+                    >
+                      <div className="p-2.5 bg-indigo-50 text-indigo-600 rounded-xl group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                        <Heart className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-0.5">
+                        <span className="text-xs font-extrabold text-slate-800 group-hover:text-indigo-700 transition-colors">ሰርግና ማህበራዊ ግብዣዎች</span>
+                        <p className="text-[9px] text-slate-400">ለባህላዊና ዘመናዊ ሰርግ፣ ለራት ግብዣዎችና ምሽቶች የሚሆኑ ድንቅ አልባሳት</p>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
+                {/* Direct Action */}
+                <div className="bg-slate-50 rounded-2xl p-3 flex flex-col sm:flex-row items-center justify-between gap-3 border border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[10px] font-bold text-slate-600">ለእርስዎ የሚስማማውን ስታይል ለማወቅ የፊት ቅርፅዎን መቃኘት ይፈልጋሉ?</span>
+                  </div>
+                  <button
+                    onClick={handleOpenScanner}
+                    className="w-full sm:w-auto bg-rose-500 hover:bg-rose-600 text-white font-extrabold text-[10px] px-4 py-2 rounded-xl transition active:scale-95"
+                  >
+                    በካሜራ እራስዎን ይፈትሹ
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
             {/* Home Sub-Tabs */}
             <div className="flex bg-slate-100 p-1 rounded-2xl max-w-sm sm:max-w-md mx-auto sm:mx-0 shadow-inner">
               <button
