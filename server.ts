@@ -92,7 +92,7 @@ async function startServer() {
       }
     }
 
-    throw lastError || new Error("ሁሉም የGemini ሞዴሎች ሙከራ አልተሳካም። እባክዎን ከጥቂት ሰከንዶች በኋላ እንደገና ይሞክሩ።");
+    throw lastError || new Error("የባለሙያ ምክረ-ሃሳብ ዝግጅት በአሁኑ ወቅት አልተሳካም። እባክዎን ከጥቂት ሰከንዶች በኋላ እንደገና ይሞክሩ።");
   }
 
   // Lazy connection to MongoDB Atlas
@@ -193,12 +193,12 @@ async function startServer() {
     }
   };
 
-  // API Route for verifying Telebirr receipts via Gemini Vision / PDF Document Analysis
+  // API Route for verifying Telebirr receipts via expert analysis / PDF Document Analysis
   app.post("/api/verify-receipt", async (req: express.Request, res: express.Response) => {
     try {
       if (!process.env.GEMINI_API_KEY) {
         return res.status(500).json({ 
-          error: "Gemini API Key is not configured in environment variables. Please check Settings > Secrets." 
+          error: "Maki Styling Advisory services are temporarily unavailable. Please verify connection credentials." 
         });
       }
 
@@ -367,12 +367,12 @@ In all cases:
     }
   });
 
-  // API Route for analyzing style and hair via Gemini
+  // API Route for preparing personal style and hair consultations
   app.post("/api/recommend", async (req: express.Request, res: express.Response) => {
     try {
       if (!process.env.GEMINI_API_KEY) {
         return res.status(500).json({ 
-          error: "Gemini API Key is not configured in environment variables. Please check Settings > Secrets." 
+          error: "Maki Styling Advisory services are temporarily unavailable. Please verify connection credentials." 
         });
       }
 
@@ -571,8 +571,8 @@ Structure your Amharic markdown recommendationText as follows:
         generatedImage: generatedImages[0]
       });
     } catch (error: any) {
-      console.error("Gemini API Error:", error);
-      res.status(500).json({ error: error.message || "Something went wrong during style analysis." });
+      console.error("Style Consultant Error:", error);
+      res.status(500).json({ error: "በምክረ-ሃሳብ ዝግጅት ወቅት ስህተት ተከስቷል። እባክዎን ከጥቂት ሰከንዶች በኋላ እንደገና ይሞክሩ። (Something went wrong during the style consultation.)" });
     }
   });
 

@@ -111,7 +111,7 @@ interface SocialTrendPost {
 }
 
 // Compress Base64 image using HTML5 Canvas to 800px width/height maximums at 0.75 quality (JPEG)
-// This reduces file sizes from 4MB to ~70KB, making network transfers and Gemini analysis 50x faster!
+// This reduces file sizes from 4MB to ~70KB, making network transfers and expert analysis 50x faster!
 const compressImage = (base64Str: string, maxWidth = 800, maxHeight = 800): Promise<string> => {
   return new Promise((resolve) => {
     const img = new Image();
@@ -255,7 +255,7 @@ class AudioSynthController {
       this.gainNode.gain.setValueAtTime(this.volume, this.ctx.currentTime);
       this.gainNode.connect(this.ctx.destination);
 
-      // Warm elegant synth chords representing Liya's AI fashion wavelength
+      // Warm elegant synth chords representing professional fashion design harmony
       const notes = [261.63, 329.63, 392.00, 523.25, 587.33, 659.25]; // C4, E4, G4, C5, D5, E5
       let step = 0;
 
@@ -762,7 +762,7 @@ export default function App() {
     setPaymentStep("telebirr_p2p");
   };
 
-  // Handle transaction submission via Gemini vision receipt verification
+  // Handle transaction submission via expert receipt verification
   const handlePaymentSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!screenshotPreview) {
@@ -926,7 +926,7 @@ export default function App() {
     }
   };
 
-  // Submit and call server-side Gemini API
+  // Submit and consult the server-side expert advisory desk
   const handleAnalyzeStyle = async () => {
     if (!scannerPhoto) return;
 
@@ -999,8 +999,8 @@ export default function App() {
               <ModelGirlSilhouette className="w-7 h-7 text-white" />
             </div>
             <div>
-              <span className="font-black text-rose-950 tracking-tight text-base sm:text-lg block">ማኪ (Maki)</span>
-              <span className="text-[10px] text-slate-400 font-bold block -mt-1 tracking-wider uppercase">Fashion & Hair Style Advisor</span>
+              <span className="font-black text-rose-950 tracking-tight text-base sm:text-lg block">Maki</span>
+              <span className="text-[10px] text-slate-400 font-bold block -mt-1 tracking-wider uppercase">Cloth & Hair Style Consultant & Expert</span>
             </div>
           </div>
 
@@ -1066,7 +1066,7 @@ export default function App() {
               የኢትዮጵያ የመጀመሪያው የፋሽንና የፀጉር ስታይል አማካሪ
             </span>
             <h1 className="text-2xl sm:text-4xl font-black leading-tight">
-              የፊትዎን ቅርፅና ከለር በመቃኘት ለእርስዎ የሚስማማውን አልባሳትና የፀጉር ስታይል ይወቁ!
+              የፊትዎን ቅርፅና ከለር በመገምገም ለእርስዎ የሚስማማውን አልባሳትና የፀጉር ስታይል ይወቁ!
             </h1>
             <p className="text-xs sm:text-sm text-rose-50 leading-relaxed max-w-xl">
               ፎቶዎን በማንሳት ብቻ ለእርስዎ የሚስማማውን የወንድና የሴት ስታይል፣ የፀጉር ዲዛይንና የዕለት ተዕለት አልባሳት ዝርዝር በማኪ የፋሽን አማካሪነት በሰከንዶች ውስጥ ያግኙ።
@@ -1108,7 +1108,7 @@ export default function App() {
                     ለዕለት ተዕለት ኑሮዎና በዓላትዎ የተዘጋጀ ልዩ የኢትዮጵያውያን መመሪያ
                   </h3>
                   <p className="text-xs text-slate-600 leading-relaxed">
-                    የማኪ ስታይል አማካሪ መተግበሪያ በኢትዮጵያ ውስጥ የመጀመሪያው በምስል ንባብ (Gemini API) የታገዘ የስታይል መማክርት ነው። ቀንዎን በራስ መተማመን እንዲጀምሩ፣ በስራ ቦታዎ ብቁና ዘመናዊ ሆነው እንዲታዩ እንዲሁም ለሃይማኖታዊ በዓላት ተገቢውን ባህላዊ ክብር እንዲያላብሱ ይረዳዎታል።
+                    የማኪ ስታይል አማካሪ መተግበሪያ በኢትዮጵያ ውስጥ በሙያተኛ የዲዛይን ባለሙያዎችና ፋሽን አማካሪዎች የሚመራ የግል የስታይል መማክርት ነው። ቀንዎን በራስ መተማመን እንዲጀምሩ፣ በስራ ቦታዎ ብቁና ዘመናዊ ሆነው እንዲታዩ እንዲሁም ለሃይማኖታዊ በዓላት ተገቢውን ባህላዊ ክብር እንዲያላብሱ ይረዳዎታል።
                   </p>
                   
                   {/* Key Benefits List */}
@@ -1618,7 +1618,7 @@ export default function App() {
           </div>
         )}
 
-        {/* VIEW 2: AI STYLE & HAIR SCANNER (UNLOCKED AFTER PAYMENT) */}
+        {/* VIEW 2: PERSONAL STYLE & HAIR CONSULTATION (UNLOCKED AFTER PAYMENT) */}
         {activeTab === "scanner" && (
           <div className="bg-white rounded-3xl p-6 border border-rose-100 shadow-xl max-w-4xl mx-auto space-y-6 animate-fade-in">
             <div className="text-center space-y-1">
@@ -1794,7 +1794,7 @@ export default function App() {
                 </button>
               </div>
 
-              {/* Right Side: AI Styling Result display */}
+              {/* Right Side: Professional Styling Result display */}
               <div className="bg-slate-50 rounded-3xl border border-slate-100/80 p-5 flex flex-col justify-between min-h-[380px]">
                 {isAnalyzing ? (
                   <div className="my-auto flex flex-col items-center text-center space-y-4 py-12 animate-fade-in">
