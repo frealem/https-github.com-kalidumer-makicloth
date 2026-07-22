@@ -39,6 +39,7 @@ import habeshaKemisImg from "./assets/images/habesha_kemis_traditional_178411698
 import modernHabeshaImg from "./assets/images/modern_habesha_dress_1784117000820.jpg";
 import modernCasualImg from "./assets/images/modern_casual_style_1784117015193.jpg";
 import eveningGownImg from "./assets/images/evening_gown_fashion_1784117031845.jpg";
+import { blendUserFaceOntoStyle } from "./utils/faceCompositor";
 
 const ModelGirlSilhouette = ({ className = "w-10 h-10" }: { className?: string }) => (
   <svg
@@ -352,6 +353,27 @@ export default function App() {
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
+  // Quota & Picture Usage Limit states
+  const [generatedCount, setGeneratedCount] = useState<number>(() => {
+    const saved = localStorage.getItem("clothing_app_generated_count");
+    return saved ? parseInt(saved, 10) : 0;
+  });
+  const [showQuotaReachedModal, setShowQuotaReachedModal] = useState<boolean>(false);
+  const [isGeneratingMore, setIsGeneratingMore] = useState<boolean>(false);
+
+  const getPackageLimit = (pkg: "today" | "weekly" | "monthly" | null): number => {
+    if (pkg === "today") return 10;
+    if (pkg === "weekly") return 100;
+    if (pkg === "monthly") return 3000;
+    return 10;
+  };
+
+  const currentLimit = getPackageLimit(purchasedPackage);
+
+  useEffect(() => {
+    localStorage.setItem("clothing_app_generated_count", generatedCount.toString());
+  }, [generatedCount]);
+
   // Expiration states
   const [timeLeftStr, setTimeLeftStr] = useState<string>("");
   const [showExpiredModal, setShowExpiredModal] = useState<boolean>(false);
@@ -392,11 +414,32 @@ export default function App() {
     localStorage.removeItem("clothing_app_paid");
     localStorage.removeItem("clothing_app_package");
     localStorage.removeItem("clothing_app_paid_time");
+    localStorage.removeItem("clothing_app_generated_count");
     setPaid(false);
     setPurchasedPackage(null);
+    setGeneratedCount(0);
     setExpiredPackageName(pkg === "today" ? "የዛሬ (የ1 ቀን)" : pkg === "weekly" ? "የሳምንት (የ7 ቀናት)" : "የወር (የ30 ቀናት)");
     setShowExpiredModal(true);
     setActiveTab("home");
+  };
+
+  const handleQuotaResetAndRebuy = () => {
+    localStorage.removeItem("clothing_app_paid");
+    localStorage.removeItem("clothing_app_package");
+    localStorage.removeItem("clothing_app_paid_time");
+    localStorage.removeItem("clothing_app_generated_count");
+    
+    setPaid(false);
+    setPurchasedPackage(null);
+    setGeneratedCount(0);
+    setScannerPhoto(null);
+    setAnalysisResult(null);
+    setAnalysisImage(null);
+    setAnalysisImages([]);
+    setShowQuotaReachedModal(false);
+    
+    setShowPaymentModal(true);
+    setPaymentStep("package");
   };
 
   // Load persistence states on Mount and handle countdown
@@ -851,17 +894,6 @@ export default function App() {
   };
 
   // Handle scanner photo file picker with client-side compression
-  const handleScannerPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const compressed = await compressImage(reader.result as string);
-        setScannerPhoto(compressed);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
 
   // HTML5 Camera controller
   const startCamera = async (mode: "user" | "environment" = cameraFacingMode) => {
@@ -917,13 +949,39 @@ export default function App() {
         const dataUrl = canvas.toDataURL("image/jpeg");
         setScannerPhoto(dataUrl);
         stopCamera();
+        // Immediately run analysis upon photo capture
+        setTimeout(() => {
+          handleAnalyzeStyle(dataUrl);
+        }, 100);
       }
     }
   };
 
+  const handleScannerPhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const compressed = await compressImage(reader.result as string);
+        setScannerPhoto(compressed);
+        // Immediately run analysis upon upload
+        setTimeout(() => {
+          handleAnalyzeStyle(compressed);
+        }, 100);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // Submit and consult the server-side expert advisory desk
-  const handleAnalyzeStyle = async () => {
-    if (!scannerPhoto) return;
+  const handleAnalyzeStyle = async (photoOverride?: string) => {
+    const activePhoto = photoOverride || scannerPhoto;
+    if (!activePhoto) return;
+
+    if (generatedCount >= currentLimit) {
+      setShowQuotaReachedModal(true);
+      return;
+    }
 
     setIsAnalyzing(true);
     setAnalysisResult(null);
@@ -931,13 +989,12 @@ export default function App() {
     setAnalysisImages([]);
     setAnalysisError(null);
 
-    // Dynamic loading message loops for high fidelity experience
     const progressMsgs = [
-      "ምስልዎን በመጫን ላይ... (Uploading Photo)",
-      "የፊትዎን እና የሰውነትዎን ቅርፅ በመተንተን ላይ... (Analyzing features)",
-      "ለቆዳዎ ከለር የሚስማሙ ምርጥ ቀለማትን በመምረጥ ላይ... (Matching colors)",
-      "የፀጉርዎን አይነትና ምርጥ ፀጉር ስታይል በማዘጋጀት ላይ... (Selecting hair trends)",
-      "ቀን፣ ሳምንትና ወር የፋሽን ፕላን በማጠናቀር ላይ... (Compiling lookbook)"
+      scannerGender === "female"
+        ? "የፊትዎን ቅርፅና ቆዳ ከለር በመቃኘት የፋሽንና ፀጉር ዲዛይን በማዘጋጀት ላይ..."
+        : "የፊትዎን ቅርፅ በመተንተን የባርቤሪ ፀጉርና የአለባበስ ዲዛይን በማዘጋጀት ላይ...",
+      "የፊትዎን ገፅታ ሳይቀየር በአዲስ ፋሽንና ፀጉር ስታይል በማዋሃድ ላይ...",
+      "ምርጥ የከለር ቅንጅትና ወቅታዊ ስታይሎችን በማጠናቀር ላይ..."
     ];
 
     let step = 0;
@@ -945,18 +1002,19 @@ export default function App() {
     const msgInterval = setInterval(() => {
       step = (step + 1) % progressMsgs.length;
       setAnalysisProgressMsg(progressMsgs[step]);
-    }, 2500);
+    }, 2000);
 
     try {
       const response = await fetch("/api/recommend", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          image: scannerPhoto,
+          image: activePhoto,
           packageType: purchasedPackage || "today",
           gender: scannerGender,
           scanMode: scanMode,
-          txnId: purchasedTxnId
+          txnId: purchasedTxnId,
+          isMore: false
         }),
       });
 
@@ -968,18 +1026,75 @@ export default function App() {
       }
 
       setAnalysisResult(data.recommendation);
-      if (data.generatedImages && data.generatedImages.length > 0) {
-        setAnalysisImage(data.generatedImages[0]);
-        setAnalysisImages(data.generatedImages);
-      } else if (data.generatedImage) {
-        setAnalysisImage(data.generatedImage);
-        setAnalysisImages([data.generatedImage]);
+      const rawImg = (data.generatedImages && data.generatedImages[0]) || data.generatedImage;
+      
+      if (rawImg) {
+        const blendedImg = await blendUserFaceOntoStyle(activePhoto, rawImg, scannerGender);
+        setAnalysisImage(blendedImg);
+        setAnalysisImages([blendedImg]);
       }
+
+      setGeneratedCount((prev) => prev + 1);
     } catch (err: any) {
       clearInterval(msgInterval);
       setAnalysisError(err.message || "የስታይል ትንተናው ሊሳካ አልቻለም። እባክዎን እንደገና ይሞክሩ።");
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  // Generate additional style look options ("More" button click)
+  const handleGenerateMoreStyle = async () => {
+    if (!scannerPhoto) return;
+
+    if (generatedCount >= currentLimit) {
+      setShowQuotaReachedModal(true);
+      return;
+    }
+
+    setIsGeneratingMore(true);
+
+    try {
+      const response = await fetch("/api/recommend", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          image: scannerPhoto,
+          packageType: purchasedPackage || "today",
+          gender: scannerGender,
+          scanMode: scanMode,
+          txnId: purchasedTxnId,
+          isMore: true
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "ተጨማሪ ስታይል ማመንጨት አልተቻለም።");
+      }
+
+      const rawImg = (data.generatedImages && data.generatedImages[0]) || data.generatedImage;
+      
+      if (rawImg) {
+        const blendedImg = await blendUserFaceOntoStyle(scannerPhoto, rawImg, scannerGender);
+        setAnalysisImage(blendedImg);
+        setAnalysisImages((prev) => [...prev, blendedImg]);
+      }
+
+      if (data.recommendation) {
+        setAnalysisResult((prev) => 
+          prev 
+            ? `${prev}\n\n---\n\n### ✨ ተጨማሪ የስታይልና ፀጉር ዲዛይን (Look #${generatedCount + 1})\n${data.recommendation}`
+            : data.recommendation
+        );
+      }
+
+      setGeneratedCount((prev) => prev + 1);
+    } catch (err: any) {
+      alert(err.message || "ተጨማሪ ስታይል ማመንጨት አልተቻለም።");
+    } finally {
+      setIsGeneratingMore(false);
     }
   };
 
@@ -1583,7 +1698,7 @@ export default function App() {
                 <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl aspect-[4/3] overflow-hidden relative flex flex-col items-center justify-center p-4">
                   {cameraActive ? (
                     <div className="w-full h-full relative">
-                      <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover rounded-2xl"></video>
+                      <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover rounded-2xl"></video>
                       <button
                         onClick={toggleCamera}
                         className="absolute top-2 left-2 px-2.5 py-1.5 rounded-full bg-slate-950/80 text-white hover:bg-slate-950 flex items-center gap-1.5 text-[10px] font-bold shadow-md"
@@ -1711,11 +1826,28 @@ export default function App() {
                     </div>
                   </div>
 
+                  <div className="bg-gradient-to-r from-amber-500/10 via-rose-500/10 to-amber-500/10 border border-rose-200 rounded-2xl p-3 flex items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-xl bg-rose-500 text-white flex items-center justify-center font-black shrink-0 shadow-sm">
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <span className="font-extrabold text-slate-800 block text-[11px]">የጥቅልዎ የፎቶዎች አጠቃቀም</span>
+                        <span className="text-[10px] text-slate-500 block">
+                          ተዘጋጅተዋል: <strong className="text-rose-600 font-bold">{generatedCount}</strong> / {currentLimit} ፎቶዎች
+                        </span>
+                      </div>
+                    </div>
+                    <span className="bg-rose-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full uppercase shadow-xs">
+                      ቀሪ: {Math.max(0, currentLimit - generatedCount)}
+                    </span>
+                  </div>
+
                   <div className="bg-amber-50/70 border border-amber-100 rounded-xl p-3 flex gap-2 text-[10px] text-amber-900 leading-normal">
                     <Award className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                     <div>
                       <span className="font-extrabold block">የእርስዎ የክፍያ ፓኬጅ:</span>
-                      የተከፈተልዎ ፓኬጅ {purchasedPackage === "today" ? "የዛሬ (የ1 ቀን)" : purchasedPackage === "weekly" ? "የ1 ሳምንት" : "የ1 ወር"} የፋሽንና የፀጉር ስታይል ፕላነር ነው። በዚሁ መሰረት የተሟላ መረጃ ይዘጋጃል።
+                      የተከፈተልዎ ፓኬጅ {purchasedPackage === "today" ? "የዛሬ (10 ፎቶዎች)" : purchasedPackage === "weekly" ? "የ1 ሳምንት (100 ፎቶዎች)" : "የ1 ወር (3000 ፎቶዎች)"} የፋሽንና የፀጉር ስታይል ፕላነር ነው።
                     </div>
                   </div>
                 </div>
@@ -1823,24 +1955,52 @@ export default function App() {
                       <SimpleMarkdownRenderer text={analysisResult} />
                     </div>
 
-                    <div className="pt-4 border-t border-slate-200/50 flex gap-2">
+                    <div className="pt-3 border-t border-rose-100/80 flex flex-col gap-2">
                       <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(analysisResult);
-                          alert("የማኪ የስታይል ምክረ-ሃሳብ በተሳካ ሁኔታ ተገልብጧል (Copied to clipboard!)");
-                        }}
-                        className="flex-1 py-2.5 px-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-sm"
+                        onClick={handleGenerateMoreStyle}
+                        disabled={isGeneratingMore}
+                        className="w-full py-3.5 bg-gradient-to-r from-rose-500 via-rose-600 to-amber-500 hover:from-rose-600 hover:to-amber-600 text-white font-extrabold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-200 transition active:scale-95 disabled:opacity-50"
                       >
-                        <FileText className="w-4 h-4 text-slate-400" />
-                        ኮፒ አድርግ (Copy Text)
+                        {isGeneratingMore ? (
+                          <>
+                            <div className="w-4 h-4 rounded-full border-2 border-white/50 border-t-white animate-spin"></div>
+                            ተጨማሪ ስታይል በማዘጋጀት ላይ...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 text-amber-200 animate-pulse" />
+                            <span>
+                              {scannerGender === "female"
+                                ? "✨ ተጨማሪ የአሜሪካን ሞዴል ፀጉርና ፋሽን ስታይል አሳይ (More Styles)"
+                                : "✨ ተጨማሪ የባርቤሪና የአለባበስ ስታይል አሳይ (More Styles)"
+                              }
+                            </span>
+                            <span className="bg-black/20 px-2 py-0.5 rounded-full text-[10px]">
+                              ({Math.max(0, currentLimit - generatedCount)} ቀሪ)
+                            </span>
+                          </>
+                        )}
                       </button>
-                      <button
-                        onClick={() => window.print()}
-                        className="py-2.5 px-3.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md shadow-rose-100"
-                      >
-                        <Download className="w-4 h-4" />
-                        ሴቭ / ፕሪንት (Print)
-                      </button>
+
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(analysisResult);
+                            alert("የማኪ የስታይል ምክረ-ሃሳብ በተሳካ ሁኔታ ተገልብጧል (Copied to clipboard!)");
+                          }}
+                          className="flex-1 py-2.5 px-3 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-sm"
+                        >
+                          <FileText className="w-4 h-4 text-slate-400" />
+                          ኮፒ አድርግ (Copy Text)
+                        </button>
+                        <button
+                          onClick={() => window.print()}
+                          className="py-2.5 px-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition active:scale-95 shadow-md"
+                        >
+                          <Download className="w-4 h-4" />
+                          ሴቭ / ፕሪንት (Print)
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ) : (
@@ -2440,13 +2600,36 @@ export default function App() {
                         </div>
                       </div>
 
-                      {/* Makeup secret */}
-                      <div className="space-y-1.5">
-                        <span className="text-[9px] text-slate-400 block font-bold uppercase tracking-wider">የጌጣጌጥና የውበት ምስጢር (Accents & Accessories)</span>
-                        <p className="text-xs text-slate-700 leading-relaxed pl-2 border-l-2 border-rose-500 italic">
-                          "{selectedStar.makeupSecret}"
-                        </p>
-                      </div>
+      {/* Quota Reached Limit Modal */}
+      {showQuotaReachedModal && (
+        <div className="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 text-center space-y-5 shadow-2xl border border-rose-100">
+            <div className="w-16 h-16 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mx-auto border border-rose-200">
+              <Award className="w-8 h-8 animate-bounce" />
+            </div>
+            
+            <div className="space-y-2">
+              <h3 className="text-lg font-black text-slate-900">
+                የጥቅልዎ የፎቶዎች ብዛት አብቅቷል!
+              </h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                የመረጡትን የ<strong className="text-rose-600">{purchasedPackage === "today" ? "የዛሬ (10 ፎቶዎች)" : purchasedPackage === "weekly" ? "የሳምንት (100 ፎቶዎች)" : "የወር (3000 ፎቶዎች)"}</strong> ጥቅል የፎቶዎች ብዛት ({generatedCount}/{currentLimit}) ሙሉ በሙሉ ተጠቅመዋል።
+              </p>
+              <p className="text-[11px] text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                አገልግሎቱን ያለማቋረጥ ለመቀጠል እባክዎን አዲስ ጥቅል በመግዛት ድጋሚ ይጀምሩ።
+              </p>
+            </div>
+
+            <button
+              onClick={handleQuotaResetAndRebuy}
+              className="w-full py-3.5 bg-rose-500 hover:bg-rose-600 text-white font-black rounded-2xl text-xs flex items-center justify-center gap-2 transition active:scale-95 shadow-lg shadow-rose-200"
+            >
+              <Sparkles className="w-4 h-4 text-amber-200" />
+              አዲስ ጥቅል ይግዙ (Buy Package Again)
+            </button>
+          </div>
+        </div>
+      )}
                     </div>
 
                     {/* Action buttons */}
@@ -2639,12 +2822,12 @@ export default function App() {
                           </div>
                           <div>
                             <span className="font-extrabold text-xs text-slate-800 block">የዛሬ ብቻ (Daily Guide)</span>
-                            <span className="text-[10px] text-slate-400 block leading-tight">የ1 ቀን የተሟላ የስታይልና ፀጉር ዲዛይን</span>
+                            <span className="text-[10px] text-slate-400 block leading-tight">ለ1 ቀን እስከ 10 ፎቶዎች የሚዘጋጅበት</span>
                           </div>
                         </div>
                         <div className="text-right">
                           <span className="text-sm font-black text-slate-900 block">50 Birr</span>
-                          <span className="text-[9px] font-bold text-rose-500 block">ለዛሬ ብቻ</span>
+                          <span className="text-[9px] font-bold text-rose-500 block">10 ፎቶዎች</span>
                         </div>
                       </div>
 
@@ -2662,12 +2845,12 @@ export default function App() {
                           </div>
                           <div>
                             <span className="font-extrabold text-xs text-slate-800 block">የ1 ሳምንት ፕላነር (Weekly Plan)</span>
-                            <span className="text-[10px] text-slate-400 block leading-tight">የ7 ቀናት ሙሉ ስታይልና ፀጉር አማካሪ</span>
+                            <span className="text-[10px] text-slate-400 block leading-tight">ለ7 ቀናት እስከ 100 ፎቶዎች የሚዘጋጅበት</span>
                           </div>
                         </div>
                         <div className="text-right">
                           <span className="text-sm font-black text-rose-950 block">100 Birr</span>
-                          <span className="text-[9px] font-bold text-rose-600 block">ለ7 ቀናት</span>
+                          <span className="text-[9px] font-bold text-rose-600 block">100 ፎቶዎች</span>
                         </div>
                       </div>
 
@@ -2682,12 +2865,12 @@ export default function App() {
                           </div>
                           <div>
                             <span className="font-extrabold text-xs text-slate-800 block">የ1 ወር ስትራቴጂ (Monthly Strategy)</span>
-                            <span className="text-[10px] text-slate-400 block leading-tight">የ30 ቀናት የተሟላ የፀጉርና ፋሽን መመሪያ</span>
+                            <span className="text-[10px] text-slate-400 block leading-tight">ለ30 ቀናት እስከ 3000 ፎቶዎች የሚዘጋጅበት</span>
                           </div>
                         </div>
                         <div className="text-right">
                           <span className="text-sm font-black text-slate-900 block">300 Birr</span>
-                          <span className="text-[9px] font-bold text-rose-500 block">ለ30 ቀናት</span>
+                          <span className="text-[9px] font-bold text-rose-500 block">3000 ፎቶዎች</span>
                         </div>
                       </div>
                     </div>

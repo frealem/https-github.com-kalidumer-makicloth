@@ -376,7 +376,7 @@ In all cases:
         });
       }
 
-      const { image, packageType, gender, scanMode, txnId } = req.body;
+      const { image, packageType, gender, scanMode, txnId, isMore } = req.body;
       if (!image) {
         return res.status(400).json({ error: "Missing image data. Please upload a clear photo." });
       }
@@ -388,58 +388,36 @@ In all cases:
       const isUpperBody = scanMode === "upper_body";
 
       let prompt = `
-You are "ማኪ" (Maki), a highly experienced, real Ethiopian professional fashion stylist, clothing designer, and beauty consultant from Addis Ababa. 
-The user has uploaded their picture for a personalized fashion and hair styling analysis and recommendation.
-The user's gender is: ${isFemale ? "Female (ሴት)" : "Male (ወንድ)"}.
-The scanning focus selected is: ${isUpperBody ? "Upper Body (ለፀጉር ስታይል ትኩረት የተደረገ)" : "Whole Body (ለሙሉ ልብስና ፀጉር ስታይል የተደረገ)"}.
-The package chosen is: ${packageType} (which is either 'today', 'weekly', or 'monthly').
+You are "ማኪ" (Maki), an elite Ethiopian master fashion designer, clothing consultant, and hair barber/stylist expert from Addis Ababa.
+The user uploaded their photo for a personalized fashion and hair styling analysis.
+Gender: ${isFemale ? "Female (ሴት)" : "Male (ወንድ)"}.
+Scan Mode: ${isUpperBody ? "Upper Body (Hair Focus)" : "Whole Body (Outfit & Hair Focus)"}.
+Package: ${packageType || "today"}.
+${isMore ? "This is a request for MORE additional fashion outfits and hair styles (ተጨማሪ ስታይሎች)." : "This is the initial fast style analysis."}
 
-Please analyze their uploaded photo (simulate looking at their facial features, skin tone, hair texture, and look) and generate an incredibly detailed and custom styling lookbook.
-In addition, generate an English prompt describing a gorgeous professional styling/fashion lookbook preview image depicting an authentic Ethiopian model matching their gender, general facial features, skin tone, and body posture, wearing the recommended outfits.
+CRITICAL MANDATORY INSTRUCTION ON FACIAL IDENTITIES:
+- You MUST preserve the exact facial features, skin tone, eye shape, nose structure, and posture of the user from the provided image.
+- DO NOT change or replace their facial identity.
 
-Structure your Amharic markdown recommendationText as follows:
-`;
+${isFemale ? `
+FOR FEMALE CLIENTS:
+1. Analyze her posture, body shape, and natural skin tone color combination.
+2. Recommend 10+ stunning modern fashion outfits that flatter her posture and color tone.
+3. ${isMore ? "Incorporate high-fashion American model hairstyles, trending celebrity braids, glamorous Hollywood/American red carpet waves, sleek high-ponytails, and modern Habesha fusion braiding." : "Provide modern Habesha Kemis fusion and contemporary streetwear outfits, with elegant hairstyles that fit her face shape."}
+4. Explain why the specific color combinations elevate her overall look and make her look chic, modern, and confident.
+` : `
+FOR MALE CLIENTS:
+1. Act as a master hair barber expert and executive clothing consultant.
+2. Instantly analyze his face shape (jawline, forehead, bone structure) and posture within milliseconds.
+3. Recommend currently trending male haircuts: sharp high-skin fade, drop fade, taper cut, texturized afro curls, classic lineup, and beard trim designs fitting his face shape.
+4. Recommend tailored modern outfits: executive jackets, smart casual blazers, cultural suit vests, and contemporary street style fitting his body posture.
+`}
 
-      if (isUpperBody) {
-        prompt += `
-=== SCAN FOCUS: UPPER BODY (የላይኛው አካልና የፀጉር ስታይል ትንተና) ===
-1. Focus deeply on the user's face shape (oval, round, square, heart, etc.) and hair texture.
-2. You MUST list and describe GREATER THAN 10 (provide exactly 11 to 12) distinct, highly-personalized hair styling/haircut options specifically suited to their features:
-   - If Female: Provide 11-12 gorgeous hair styles (like different custom Shuruba (ሹሩባ) braids, Albaso (አልባሶ), modern curly Afro cuts, micro-braids, twists, traditional braids inspired by trending artists, modern dreadlocks, or high-puffs, etc.).
-   - If Male: Provide 11-12 crisp haircut designs (like modern Addis high-skin fades, drop fades, taper cuts, Afro temp fades, texturized curls, or classic lineups, etc.).
-3. For each of the 11-12 styles, write a detailed and premium description of what makes it look stunning, how it complements their facial features, and the recommended hair product/care.
-4. Conclude with your absolute #1 expert styling recommendation on which hair style/cut fits them best and why, acting as their expert stylist.
-`;
-      } else {
-        prompt += `
-=== SCAN FOCUS: WHOLE BODY (የሙሉ ሰውነትና አልባሳት ትንተና) ===
-1. Focus on BOTH clothing/dressing styles AND hair cut/hair styling options!
-2. You MUST provide:
-   - GREATER THAN 10 (provide exactly 11 to 12) distinct dressing/clothing styles specifically suited to their overall body shape/silhouette (slim, athletic, curvy, plus, etc.) WITHOUT touching or altering their natural body structure (keeping it natural, realistic, and beautiful).
-   - AND GREATER THAN 10 (provide exactly 11 to 12) different hair styling/haircut options.
-3. For the dressing/clothing styles, you MUST consider:
-   - Traditional find dressing styles must incorporate current fashion trends from famous Ethiopian TikTokers, Instagram fashion posts, and trending Habesha custom designers (e.g. elegant modern Habesha Kemis with custom tilet/ጥበብ, custom Habesha men's suit vest, elegant chiffon borders, etc.).
-   - Modern dressing styles must reflect what is currently trending among modern Ethiopian TikTokers, musicians, artists, and prominent Addis Ababa social media influencers (e.g., Addis contemporary street style, custom hoodies with local cultural prints, executive jackets, elegant evening dresses, etc.).
-4. For each recommended item, describe why it suits their skin tone and body shape beautifully without changing their actual silhouette.
-5. Conclude with your ultimate master recommendation that coordinates the absolute best clothing style with the perfect hair cut/hairstyle, acting as their ultimate personal fashion designer and barber specialist stylist.
-`;
-      }
+Structure your response in warm, encouraging, highly professional AMHARIC (አማርኛ) markdown with clear headings, bullet points, and expert tips.
 
-      prompt += `
-=== GENERAL FORMATTING RULES FOR THE AMHARIC markdown (recommendationText) ===
-1. Write the entire output in clear, beautiful, warm, encouraging, and engaging AMHARIC (አማርኛ). 
-2. Be highly specific about the Ethiopian context (e.g. mention Habesha Kemis, custom local casualwear, suitable hairstyles like braids/shuruba for local hair textures, local styling accessories, Addis Ababa events, etc.).
-3. Format the response beautifully using clean Markdown with clear headings (###), bold text, and bullet points. Keep it highly professional and premium-looking.
-4. STRICTLY FORBIDDEN: Do NOT mention anything about "I am an AI model", "This is a simulation", or "As an AI". You are a real human fashion consultant named "ማኪ" (Maki) who has a physical studio in Addis Ababa. Speak as "የግል ፋሽንና የፀጉር ስታይል አማካሪዎ" (Your Personal Fashion & Hair Stylist).
-5. Address them warmly and professionally as "ውድ ደንበኛችን" (Our dear client).
-
-=== RULES FOR THE IMAGEN prompt (imagenPrompt) - CRITICAL VISUAL INSTRUCTIONS ===
-1. Write a highly detailed, evocative, and photorealistic English prompt for an image generator like Imagen 3 to create a stunning high-fashion styling preview image.
-2. It MUST strictly depict a highly realistic, authentic Ethiopian model (completely avoiding foreign, caucasian, or generic western faces) matching their gender (${gender}), natural skin tone, and body form.
-3. The model's face should feature genuine East African / Habesha facial structure and authentic hair texture. You may specify that they are styled like iconic Ethiopian fashion stars and top supermodels (such as supermodel Liya Kebede or prominent modern Addis fashion icons) to capture that ultra-stylish, highly-polished star look.
-4. The clothing MUST be traditional Habesha dress (e.g., Habesha Kemis with exquisite handwoven 'tilet' (ጥበብ) gold or colored borders, chiffon drapery) or premium modern contemporary Addis Ababa streetwear with subtle local cultural accents.
-5. The hairstyle must be a beautiful, professionally done traditional or modern style (such as braids/shuruba, elegant albaso braiding, natural Afro curly textures, or crisp male high-skin fade with clean lineups).
-6. Strictly use keywords: "authentic Ethiopian face, gorgeous Habesha style model, professional studio fashion photography, elegant model pose, soft directional lighting, realistic fabric texture, 8k, photorealistic, premium editorial portrait".
+For the imagenPrompt field:
+Write a highly detailed, photorealistic English prompt for Imagen 3 describing a high-fashion portrait matching their exact gender (${gender}), posture, facial structure, skin tone, wearing the recommended modern outfit and haircut/hairstyle.
+Key phrases to include: "exact face and facial structure from input image preserved, high fashion editorial portrait, studio lighting, photorealistic 8k".
 `;
 
       const imagePart = {
@@ -458,11 +436,11 @@ Structure your Amharic markdown recommendationText as follows:
             properties: {
               recommendationText: {
                 type: Type.STRING,
-                description: "The complete beautifully formatted Amharic markdown lookbook as requested."
+                description: "The complete beautifully formatted Amharic markdown lookbook."
               },
               imagenPrompt: {
                 type: Type.STRING,
-                description: "The detailed English prompt for Imagen 3 describing the model matching the user's face profile and body posture in the recommended outfits."
+                description: "The detailed English prompt for Imagen 3."
               }
             },
             required: ["recommendationText", "imagenPrompt"]
@@ -479,19 +457,13 @@ Structure your Amharic markdown recommendationText as follows:
       const recText = parsedResult.recommendationText || "";
       const imagenPromptStr = parsedResult.imagenPrompt || "";
 
-      // Determine how many images to generate based on package type (Premium Multiplier)
       let numberOfImages = 1;
-      if (packageType === "weekly") {
-        numberOfImages = 2;
-      } else if (packageType === "monthly") {
-        numberOfImages = 4;
-      }
 
       const generatedImages: string[] = [];
 
       if (imagenPromptStr) {
         try {
-          console.log(`[Imagen] Generating style preview using model: 'imagen-3.0-generate-002' with prompt: "${imagenPromptStr}" (count: ${numberOfImages})`);
+          console.log(`[Imagen] Generating style preview with prompt: "${imagenPromptStr}"`);
           const imageResponse = await ai.models.generateImages({
             model: "imagen-3.0-generate-002",
             prompt: imagenPromptStr,
@@ -507,61 +479,26 @@ Structure your Amharic markdown recommendationText as follows:
               const imgBytes = imgObj.image.imageBytes;
               generatedImages.push(`data:image/jpeg;base64,${imgBytes}`);
             }
-            console.log(`[Imagen] Successfully generated ${generatedImages.length} style preview images.`);
           }
         } catch (imgError: any) {
           console.warn("[Imagen] Failed to generate image via Imagen 3:", imgError.message || imgError);
         }
       }
 
-      // Safe Fallback if Imagen fails or is empty - Featuring authentic, gorgeous East African portraits
+      // Fallback images if generation fails
       if (generatedImages.length === 0) {
         if (gender === "female") {
-          generatedImages.push("https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=600");
-          if (numberOfImages >= 2) {
-            generatedImages.push("https://images.unsplash.com/photo-1595959183075-c1d0a161b050?auto=format&fit=crop&q=80&w=600");
-          }
-          if (numberOfImages >= 4) {
-            generatedImages.push("https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600");
-            generatedImages.push("https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=600");
-          }
+          generatedImages.push(
+            isMore 
+              ? "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=600"
+              : "https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&q=80&w=600"
+          );
         } else {
-          generatedImages.push("https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600");
-          if (numberOfImages >= 2) {
-            generatedImages.push("https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600");
-          }
-          if (numberOfImages >= 4) {
-            generatedImages.push("https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=600");
-            generatedImages.push("https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600");
-          }
-        }
-      }
-
-      // Save full recommendation details to MongoDB Atlas if txnId is provided
-      if (txnId) {
-        const cleanTxnId = txnId.toUpperCase().trim();
-        const client = await getMongoClient();
-        if (client) {
-          try {
-            const db = client.db();
-            // Perform an update to include analysis outcomes and metadata under the user's transaction id document
-            await db.collection("users").updateOne(
-              { txnId: cleanTxnId },
-              {
-                $set: {
-                  analysisGender: gender,
-                  analysisScanMode: scanMode,
-                  recommendationText: recText,
-                  generatedImages: generatedImages,
-                  analyzedAt: new Date()
-                }
-              },
-              { upsert: false } // Only set if a verified user transaction ID already exists in MongoDB
-            );
-            console.log(`[MongoDB] Updated user style recommendation details for transaction ${cleanTxnId}.`);
-          } catch (dbErr) {
-            console.error("[MongoDB] Error updating user recommendation details:", dbErr);
-          }
+          generatedImages.push(
+            isMore
+              ? "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=600"
+              : "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600"
+          );
         }
       }
 
@@ -572,7 +509,7 @@ Structure your Amharic markdown recommendationText as follows:
       });
     } catch (error: any) {
       console.error("Style Consultant Error:", error);
-      res.status(500).json({ error: "በምክረ-ሃሳብ ዝግጅት ወቅት ስህተት ተከስቷል። እባክዎን ከጥቂት ሰከንዶች በኋላ እንደገና ይሞክሩ። (Something went wrong during the style consultation.)" });
+      res.status(500).json({ error: "በምክረ-ሃሳብ ዝግጅት ወቅት ስህተት ተከስቷል። እባክዎን ከጥቂት ሰከንዶች በኋላ እንደገና ይሞክሩ።" });
     }
   });
 
