@@ -1941,36 +1941,59 @@ export default function App() {
                     <div className="flex-1 max-h-[440px] overflow-y-auto pr-1 text-slate-700 leading-relaxed text-xs space-y-4 bg-white border border-slate-100 rounded-2xl p-4 shadow-inner">
                       {analysisImage && (
                         <div className="space-y-3 border-b border-rose-100 pb-4 mb-4">
-                          <span className="text-[10px] bg-rose-50 text-rose-600 px-2.5 py-1 rounded-full border border-rose-100 font-black uppercase tracking-wider inline-block">
-                            የእርስዎ ዲዛይን ቅድመ-ዕይታ (Your Styling Lookbook Gallery)
-                          </span>
-                          <div className="relative aspect-[3/4] max-w-[280px] mx-auto rounded-2xl overflow-hidden border border-rose-100 shadow-md bg-slate-50">
-                            <img 
-                              src={analysisImage} 
-                              alt="Generated style recommendation preview" 
-                              referrerPolicy="no-referrer"
-                              className="w-full h-full object-cover transition-all duration-300"
-                            />
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950/90 via-slate-950/50 to-transparent p-3 text-white text-center">
-                              <p className="text-[10px] font-bold">የፊትና የሰውነት ቅርፅ ቅንጅት ቅድመ-ዕይታ</p>
-                              <p className="text-[8px] text-slate-300">Generated dynamically by Maki</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] bg-rose-50 text-rose-600 px-2.5 py-1 rounded-full border border-rose-100 font-black uppercase tracking-wider inline-block">
+                              የእርስዎ ዲዛይን ቅድመ-ዕይታ (Before & After Lookbook)
+                            </span>
+                          </div>
+
+                          {/* Side-by-side / Dual preview cards */}
+                          <div className="grid grid-cols-2 gap-2 max-w-[340px] mx-auto">
+                            {scannerPhoto && (
+                              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100 group">
+                                <img 
+                                  src={scannerPhoto} 
+                                  alt="Original captured user photo" 
+                                  className="w-full h-full object-cover"
+                                />
+                                <div className="absolute inset-x-0 bottom-0 bg-slate-950/80 backdrop-blur-xs p-1.5 text-center">
+                                  <span className="text-[9px] font-bold text-slate-200 block">የእርስዎ ፎቶ</span>
+                                  <span className="text-[7px] text-slate-400 block uppercase">Original</span>
+                                </div>
+                              </div>
+                            )}
+
+                            <div className={`relative aspect-[3/4] rounded-2xl overflow-hidden border-2 border-rose-500 shadow-md bg-slate-50 ${!scannerPhoto ? "col-span-2 max-w-[220px] mx-auto" : ""}`}>
+                              <img 
+                                src={analysisImage} 
+                                alt="Generated fashion recommendation look" 
+                                referrerPolicy="no-referrer"
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-rose-950/90 via-rose-950/70 to-transparent p-1.5 text-center text-white">
+                                <span className="text-[9px] font-black block text-amber-200">አዲሱ ስታይል ✨</span>
+                                <span className="text-[7px] text-rose-200 block uppercase">New Style Look</span>
+                              </div>
                             </div>
                           </div>
-                          
-                          {/* Thumbnails list if there are multiple images */}
+
+                          {/* Thumbnails gallery if there are multiple generated variations */}
                           {analysisImages.length > 1 && (
-                            <div className="flex gap-2 justify-center overflow-x-auto py-2 px-1">
-                              {analysisImages.map((img, idx) => (
-                                <button
-                                  key={idx}
-                                  onClick={() => setAnalysisImage(img)}
-                                  className={`w-12 h-16 rounded-lg overflow-hidden border-2 shrink-0 transition ${
-                                    analysisImage === img ? "border-rose-500 scale-105 shadow-sm" : "border-slate-200 opacity-70 hover:opacity-100"
-                                  }`}
-                                >
-                                  <img src={img} alt={`Thumbnail ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                                </button>
-                              ))}
+                            <div className="space-y-1 text-center pt-1">
+                              <span className="text-[9px] text-slate-400 font-bold block">ተጨማሪ የተዘጋጁ ስታይሎች (Select Variation):</span>
+                              <div className="flex gap-2 justify-center overflow-x-auto py-1 px-1">
+                                {analysisImages.map((img, idx) => (
+                                  <button
+                                    key={idx}
+                                    onClick={() => setAnalysisImage(img)}
+                                    className={`w-12 h-16 rounded-lg overflow-hidden border-2 shrink-0 transition ${
+                                      analysisImage === img ? "border-rose-500 scale-105 shadow-sm" : "border-slate-200 opacity-70 hover:opacity-100"
+                                    }`}
+                                  >
+                                    <img src={img} alt={`Look ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                  </button>
+                                ))}
+                              </div>
                             </div>
                           )}
                         </div>
