@@ -395,29 +395,31 @@ Scan Mode: ${isUpperBody ? "Upper Body (Hair Focus)" : "Whole Body (Outfit & Hai
 Package: ${packageType || "today"}.
 ${isMore ? "This is a request for MORE additional fashion outfits and hair styles (ተጨማሪ ስታይሎች)." : "This is the initial fast style analysis."}
 
-CRITICAL MANDATORY INSTRUCTION ON FACIAL IDENTITIES:
-- You MUST preserve the exact facial features, skin tone, eye shape, nose structure, and posture of the user from the provided image.
-- DO NOT change or replace their facial identity.
-
-${isFemale ? `
+CRITICAL MANDATORY INSTRUCTIONS ON USER FACIAL IDENTITY & POSTURE:
+1. Carefully analyze the uploaded photo's face (jawline, cheekbones, eye shape, nose, skin tone undertone) and body posture.
+2. The user's face and natural skin color MUST be preserved.
+3. ${isFemale ? `
 FOR FEMALE CLIENTS:
-1. Analyze her posture, body shape, and natural skin tone color combination.
-2. Recommend 10+ stunning modern fashion outfits that flatter her posture and color tone.
-3. ${isMore ? "Incorporate high-fashion American model hairstyles, trending celebrity braids, glamorous Hollywood/American red carpet waves, sleek high-ponytails, and modern Habesha fusion braiding." : "Provide modern Habesha Kemis fusion and contemporary streetwear outfits, with elegant hairstyles that fit her face shape."}
-4. Explain why the specific color combinations elevate her overall look and make her look chic, modern, and confident.
+- Analyze her posture, body build, and natural skin tone.
+- Recommend 10+ stunning modern fashion outfits tailored to her posture and skin tone.
+- ${isMore ? "Incorporate high-fashion American model hairstyles, celebrity red carpet braids, glamorous waves, high ponytails, and modern Habesha fusion hairstyles without changing her face." : "Provide modern Habesha Kemis fusion, high-fashion dresses, and modern street style with hairstyles fitting her face shape."}
+- Detail why the specific color palette elevates her look to be chic, modern, and high-fashion.
 ` : `
 FOR MALE CLIENTS:
-1. Act as a master hair barber expert and executive clothing consultant.
-2. Instantly analyze his face shape (jawline, forehead, bone structure) and posture within milliseconds.
-3. Recommend currently trending male haircuts: sharp high-skin fade, drop fade, taper cut, texturized afro curls, classic lineup, and beard trim designs fitting his face shape.
-4. Recommend tailored modern outfits: executive jackets, smart casual blazers, cultural suit vests, and contemporary street style fitting his body posture.
+- Act as a master barber and executive tailor expert.
+- Instantly analyze his jawline, forehead, and body posture within milliseconds.
+- Recommend trending male haircuts (sharp high-skin fade, drop fade, taper cut, texturized afro curls, lineup) matching his face shape.
+- Recommend tailored executive suits, modern blazers, and urban street style fitting his posture and color tone.
 `}
 
 Structure your response in warm, encouraging, highly professional AMHARIC (አማርኛ) markdown with clear headings, bullet points, and expert tips.
 
-For the imagenPrompt field:
-Write a highly detailed, photorealistic English prompt for Imagen 3 describing a high-fashion portrait matching their exact gender (${gender}), posture, facial structure, skin tone, wearing the recommended modern outfit and haircut/hairstyle.
-Key phrases to include: "exact face and facial structure from input image preserved, high fashion editorial portrait, studio lighting, photorealistic 8k".
+For the "imagenPrompt" JSON field:
+Write a hyper-detailed, photorealistic English prompt for Imagen 3 describing a high-fashion editorial portrait.
+It MUST specify:
+- The exact facial features, skin tone shade, face shape, eye shape, and posture of the person in the reference input image.
+- The new recommended modern fashion outfit (${isFemale ? "modern luxury dress/outfit and high-fashion American model hairstyle" : "tailored modern blazer/jacket with a sharp barber fade haircut"}).
+- Include key phrases: "exact facial structure and skin tone from reference image preserved, photorealistic studio fashion portrait, 8k resolution, elegant lighting".
 `;
 
       const imagePart = {

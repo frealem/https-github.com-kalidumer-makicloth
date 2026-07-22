@@ -408,6 +408,7 @@ export default function App() {
   // Webcam & UI references
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const cameraFileInputRef = useRef<HTMLInputElement | null>(null);
   const screenshotInputRef = useRef<HTMLInputElement | null>(null);
 
   const handlePackageExpired = (pkg: "today" | "weekly" | "monthly") => {
@@ -895,7 +896,7 @@ export default function App() {
 
   // Handle scanner photo file picker with client-side compression
 
-  // HTML5 Camera controller
+  // HTML5 Camera controller with mobile fallback
   const startCamera = async (mode: "user" | "environment" = cameraFacingMode) => {
     try {
       setCameraActive(true);
@@ -907,16 +908,30 @@ export default function App() {
         stream.getTracks().forEach(track => track.stop());
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ 
-        video: { facingMode: mode } 
-      });
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ 
+          video: { facingMode: { ideal: mode }, width: { ideal: 1280 }, height: { ideal: 720 } } 
+        });
+      } catch (e) {
+        // Fallback to basic video constraint without facingMode constraint
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
+
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        videoRef.current.onloadedmetadata = () => {
+          videoRef.current?.play().catch(pErr => console.warn("Video play error:", pErr));
+        };
       }
     } catch (err) {
-      console.warn("Camera access failed", err);
-      alert("ካሜራ ለመክፈት አልተቻለም። እባክዎን የፎቶ ፋይል መጫኛውን (Upload) ይጠቀሙ።");
+      console.warn("WebRTC camera access failed, opening native mobile camera input:", err);
       setCameraActive(false);
+      if (cameraFileInputRef.current) {
+        cameraFileInputRef.current.click();
+      } else {
+        alert("ካሜራ ለመክፈት አልተቻለም። እባክዎን የፎቶ ፋይል መጫኛውን (Upload) ይጠቀሙ።");
+      }
     }
   };
 
@@ -1765,6 +1780,14 @@ export default function App() {
                         type="file"
                         ref={fileInputRef}
                         accept="image/*"
+                        onChange={handleScannerPhotoChange}
+                        className="hidden"
+                      />
+                      <input
+                        type="file"
+                        ref={cameraFileInputRef}
+                        accept="image/*"
+                        capture="user"
                         onChange={handleScannerPhotoChange}
                         className="hidden"
                       />
