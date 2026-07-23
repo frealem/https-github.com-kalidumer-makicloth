@@ -1041,12 +1041,18 @@ export default function App() {
       }
 
       setAnalysisResult(data.recommendation);
-      const rawImg = (data.generatedImages && data.generatedImages[0]) || data.generatedImage;
+      const rawImgs: string[] = (data.generatedImages && data.generatedImages.length > 0)
+        ? data.generatedImages
+        : (data.generatedImage ? [data.generatedImage] : []);
       
-      if (rawImg) {
-        const blendedImg = await blendUserFaceOntoStyle(activePhoto, rawImg, scannerGender);
-        setAnalysisImage(blendedImg);
-        setAnalysisImages([blendedImg]);
+      if (rawImgs.length > 0) {
+        const blendedList: string[] = [];
+        for (const rawImg of rawImgs) {
+          const blendedImg = await blendUserFaceOntoStyle(activePhoto, rawImg, scannerGender);
+          blendedList.push(blendedImg);
+        }
+        setAnalysisImage(blendedList[0]);
+        setAnalysisImages(blendedList);
       }
 
       setGeneratedCount((prev) => prev + 1);
@@ -1977,22 +1983,35 @@ export default function App() {
                             </div>
                           </div>
 
-                          {/* Thumbnails gallery if there are multiple generated variations */}
+                          {/* Thumbnails gallery for identity-locked style looks (Casual, Professional, Formal) */}
                           {analysisImages.length > 1 && (
                             <div className="space-y-1 text-center pt-1">
-                              <span className="text-[9px] text-slate-400 font-bold block">ተጨማሪ የተዘጋጁ ስታይሎች (Select Variation):</span>
+                              <span className="text-[9px] text-slate-500 font-bold block">የስታይል ምርጫዎች (Identity-Locked Style Looks):</span>
                               <div className="flex gap-2 justify-center overflow-x-auto py-1 px-1">
-                                {analysisImages.map((img, idx) => (
-                                  <button
-                                    key={idx}
-                                    onClick={() => setAnalysisImage(img)}
-                                    className={`w-12 h-16 rounded-lg overflow-hidden border-2 shrink-0 transition ${
-                                      analysisImage === img ? "border-rose-500 scale-105 shadow-sm" : "border-slate-200 opacity-70 hover:opacity-100"
-                                    }`}
-                                  >
-                                    <img src={img} alt={`Look ${idx + 1}`} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                                  </button>
-                                ))}
+                                {analysisImages.map((img, idx) => {
+                                  const lookLabels = ["Casual (ካዡዋል)", "Professional (ፕሮፌሽናል)", "Formal (ፎርማል)"];
+                                  const label = lookLabels[idx] || `Look #${idx + 1}`;
+                                  const isActive = analysisImage === img;
+                                  return (
+                                    <button
+                                      key={idx}
+                                      onClick={() => setAnalysisImage(img)}
+                                      className={`flex flex-col items-center group transition focus:outline-none`}
+                                    >
+                                      <div className={`w-14 h-18 rounded-xl overflow-hidden border-2 shrink-0 relative transition-all ${
+                                        isActive ? "border-rose-500 scale-105 shadow-md ring-2 ring-rose-200" : "border-slate-200 opacity-75 hover:opacity-100"
+                                      }`}>
+                                        <img src={img} alt={label} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
+                                        <div className="absolute inset-x-0 bottom-0 bg-slate-950/75 py-0.5 text-center">
+                                          <span className="text-[7px] text-white font-bold block">{idx + 1}</span>
+                                        </div>
+                                      </div>
+                                      <span className={`text-[8px] font-bold mt-1 ${isActive ? "text-rose-600" : "text-slate-500 group-hover:text-slate-800"}`}>
+                                        {label.split(" ")[0]}
+                                      </span>
+                                    </button>
+                                  );
+                                })}
                               </div>
                             </div>
                           )}

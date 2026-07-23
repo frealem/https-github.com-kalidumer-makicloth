@@ -396,30 +396,33 @@ Package: ${packageType || "today"}.
 ${isMore ? "This is a request for MORE additional fashion outfits and hair styles (ተጨማሪ ስታይሎች)." : "This is the initial fast style analysis."}
 
 CRITICAL MANDATORY INSTRUCTIONS ON USER FACIAL IDENTITY & POSTURE:
-1. Carefully analyze the uploaded photo's face (jawline, cheekbones, eye shape, nose, skin tone undertone) and body posture.
-2. The user's face and natural skin color MUST be preserved.
+1. Perform a STRICT IDENTITY LOCK on the user's face (eyes, nose, mouth, smile, facial structure, skin tone, unique features).
+2. The user's exact facial identity MUST be preserved across all recommended looks. Only modify the hairstyle, clothing, outfit, and posture.
 3. ${isFemale ? `
 FOR FEMALE CLIENTS:
 - Analyze her posture, body build, and natural skin tone.
-- Recommend 10+ stunning modern fashion outfits tailored to her posture and skin tone.
-- ${isMore ? "Incorporate high-fashion American model hairstyles, celebrity red carpet braids, glamorous waves, high ponytails, and modern Habesha fusion hairstyles without changing her face." : "Provide modern Habesha Kemis fusion, high-fashion dresses, and modern street style with hairstyles fitting her face shape."}
-- Detail why the specific color palette elevates her look to be chic, modern, and high-fashion.
+- Recommend 3 distinct styling looks:
+  1. Casual Look: Modern relaxed outfit (e.g., stylish denim jacket/chic streetwear) with a fresh hairstyle (e.g., shoulder-length bob or soft waves).
+  2. Professional Look: Tailored executive outfit (e.g., navy blue blazer or luxury business suit) with a sleek hairstyle (e.g., low ponytail or polished bun).
+  3. Formal Look: Elegant evening outfit (e.g., emerald green silk gown or high-fashion Habesha fusion) with glamorous flowing waves or intricate braids.
+- Detail why each specific color palette and style elevates her look.
 ` : `
 FOR MALE CLIENTS:
 - Act as a master barber and executive tailor expert.
-- Instantly analyze his jawline, forehead, and body posture within milliseconds.
-- Recommend trending male haircuts (sharp high-skin fade, drop fade, taper cut, texturized afro curls, lineup) matching his face shape.
-- Recommend tailored executive suits, modern blazers, and urban street style fitting his posture and color tone.
+- Analyze his jawline, forehead, and body posture.
+- Recommend 3 distinct styling looks:
+  1. Casual Look: Modern casual streetwear (e.g., leather jacket or crisp fitted tee) with a texturized crop/afro curls haircut.
+  2. Professional Look: Tailored executive suit or sharp blazer with a crisp lineup and high-skin fade haircut.
+  3. Formal Look: High-fashion formal tuxedo or luxury cultural suit vest with a polished beard trim and sharp taper cut.
 `}
 
-Structure your response in warm, encouraging, highly professional AMHARIC (አማርኛ) markdown with clear headings, bullet points, and expert tips.
+Structure your response in warm, encouraging, highly professional AMHARIC (አማርኛ) markdown with clear headings for Casual (ካዡዋል), Professional (ፕሮፌሽናል), and Formal (ፎርማል) looks.
 
-For the "imagenPrompt" JSON field:
-Write a hyper-detailed, photorealistic English prompt for Imagen 3 describing a high-fashion editorial portrait.
-It MUST specify:
-- The exact facial features, skin tone shade, face shape, eye shape, and posture of the person in the reference input image.
-- The new recommended modern fashion outfit (${isFemale ? "modern luxury dress/outfit and high-fashion American model hairstyle" : "tailored modern blazer/jacket with a sharp barber fade haircut"}).
-- Include key phrases: "exact facial structure and skin tone from reference image preserved, photorealistic studio fashion portrait, 8k resolution, elegant lighting".
+For the "imagenPrompts" array JSON field:
+Provide an array of 3 hyper-detailed, photorealistic English prompts for Imagen 3:
+- Prompt 1 (Casual Look): "STRICT FACIAL IDENTITY LOCK preserved from input photo. Exact facial features, eyes, smile, skin tone intact. Wearing modern casual clothing outfit (${isFemale ? "stylish denim jacket and casual streetwear with texturized shoulder-length bob hairstyle" : "chic casual jacket and fitted tee with texturized haircut"}), 8k resolution studio fashion portrait, photorealistic".
+- Prompt 2 (Professional Look): "STRICT FACIAL IDENTITY LOCK preserved from input photo. Exact facial features, eyes, smile, skin tone intact. Wearing executive professional outfit (${isFemale ? "tailored navy blue business blazer with sleek low ponytail hairstyle" : "tailored dark executive suit with sharp skin fade barber haircut"}), 8k resolution studio fashion portrait, photorealistic".
+- Prompt 3 (Formal Look): "STRICT FACIAL IDENTITY LOCK preserved from input photo. Exact facial features, eyes, smile, skin tone intact. Wearing high-fashion formal evening outfit (${isFemale ? "emerald silk evening gown with glamorous flowing waves hairstyle" : "luxurious formal tuxedo with crisp lineup haircut"}), 8k resolution studio fashion portrait, photorealistic".
 `;
 
       const imagePart = {
@@ -438,11 +441,16 @@ It MUST specify:
             properties: {
               recommendationText: {
                 type: Type.STRING,
-                description: "The complete beautifully formatted Amharic markdown lookbook."
+                description: "The complete beautifully formatted Amharic markdown lookbook covering Casual, Professional, and Formal looks."
               },
               imagenPrompt: {
                 type: Type.STRING,
-                description: "The detailed English prompt for Imagen 3."
+                description: "Primary English prompt for Imagen 3."
+              },
+              imagenPrompts: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING },
+                description: "Array of 3 English prompts for Casual, Professional, and Formal looks."
               }
             },
             required: ["recommendationText", "imagenPrompt"]
@@ -457,20 +465,23 @@ It MUST specify:
 
       const parsedResult = JSON.parse(resultText.trim());
       const recText = parsedResult.recommendationText || "";
-      const imagenPromptStr = parsedResult.imagenPrompt || "";
-
-      let numberOfImages = 1;
+      const primaryPrompt = parsedResult.imagenPrompt || "";
+      const promptList: string[] = (parsedResult.imagenPrompts && parsedResult.imagenPrompts.length > 0)
+        ? parsedResult.imagenPrompts.slice(0, 3)
+        : [primaryPrompt];
 
       const generatedImages: string[] = [];
 
-      if (imagenPromptStr) {
+      // Generate images sequentially for each prompt to maximize consistency
+      for (const promptStr of promptList) {
+        if (!promptStr) continue;
         try {
-          console.log(`[Imagen] Generating style preview with prompt: "${imagenPromptStr}"`);
+          console.log(`[Imagen] Generating style preview with prompt: "${promptStr.substring(0, 80)}..."`);
           const imageResponse = await ai.models.generateImages({
             model: "imagen-3.0-generate-002",
-            prompt: imagenPromptStr,
+            prompt: promptStr,
             config: {
-              numberOfImages: numberOfImages,
+              numberOfImages: 1,
               outputMimeType: "image/jpeg",
               aspectRatio: "3:4"
             }
