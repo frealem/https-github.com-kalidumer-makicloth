@@ -40,6 +40,7 @@ import modernHabeshaImg from "./assets/images/modern_habesha_dress_1784117000820
 import modernCasualImg from "./assets/images/modern_casual_style_1784117015193.jpg";
 import eveningGownImg from "./assets/images/evening_gown_fashion_1784117031845.jpg";
 import { blendUserFaceOntoStyle } from "./utils/faceCompositor";
+import { CelebrityTransformationSection } from "./components/CelebrityTransformationSection";
 
 const ModelGirlSilhouette = ({ className = "w-10 h-10" }: { className?: string }) => (
   <svg
@@ -364,7 +365,7 @@ export default function App() {
   const getPackageLimit = (pkg: "today" | "weekly" | "monthly" | null): number => {
     if (pkg === "today") return 10;
     if (pkg === "weekly") return 100;
-    if (pkg === "monthly") return 3000;
+    if (pkg === "monthly") return 600;
     return 10;
   };
 
@@ -522,6 +523,24 @@ export default function App() {
     checkExpiration();
     const timer = setInterval(checkExpiration, 15000); // Check every 15 seconds
     return () => clearInterval(timer);
+  }, [paid]);
+
+  // SaaS Growth Engine: Prompt unregistered users to select a package every 10 seconds
+  useEffect(() => {
+    if (paid) return;
+
+    const paymentReminderTimer = setInterval(() => {
+      setShowPaymentModal((prev) => {
+        if (!prev) {
+          console.log("[SaaS Growth Engine] Auto-opening package payment modal for unregistered user (10s timer)");
+          setPaymentStep("package");
+          return true;
+        }
+        return prev;
+      });
+    }, 10000); // Trigger every 10 seconds (10,000ms)
+
+    return () => clearInterval(paymentReminderTimer);
   }, [paid]);
 
   // Animate the sound wave visualizer if playing
@@ -1224,6 +1243,9 @@ export default function App() {
         {/* VIEW 1: HOME CATALOGUE / CURATED SHOWCASE */}
         {activeTab === "home" && (
           <div className="space-y-8">
+
+            {/* ETHIOPIAN CELEBRITY BEFORE & AFTER SHOWCASE */}
+            <CelebrityTransformationSection />
             
             {/* WHY CHOOSE MAKI & DAILY OUTFIT PLANNER BENTO */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
@@ -1944,83 +1966,104 @@ export default function App() {
                     </div>
 
                     {/* Scrollable recommendation block */}
-                    <div className="flex-1 max-h-[440px] overflow-y-auto pr-1 text-slate-700 leading-relaxed text-xs space-y-4 bg-white border border-slate-100 rounded-2xl p-4 shadow-inner">
-                      {analysisImage && (
-                        <div className="space-y-3 border-b border-rose-100 pb-4 mb-4">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[10px] bg-rose-50 text-rose-600 px-2.5 py-1 rounded-full border border-rose-100 font-black uppercase tracking-wider inline-block">
-                              የእርስዎ ዲዛይን ቅድመ-ዕይታ (Before & After Lookbook)
-                            </span>
-                          </div>
-
-                          {/* Side-by-side / Dual preview cards */}
-                          <div className="grid grid-cols-2 gap-2 max-w-[340px] mx-auto">
-                            {scannerPhoto && (
-                              <div className="relative aspect-[3/4] rounded-2xl overflow-hidden border border-slate-200 shadow-sm bg-slate-100 group">
-                                <img 
-                                  src={scannerPhoto} 
-                                  alt="Original captured user photo" 
-                                  className="w-full h-full object-cover"
-                                />
-                                <div className="absolute inset-x-0 bottom-0 bg-slate-950/80 backdrop-blur-xs p-1.5 text-center">
-                                  <span className="text-[9px] font-bold text-slate-200 block">የእርስዎ ፎቶ</span>
-                                  <span className="text-[7px] text-slate-400 block uppercase">Original</span>
-                                </div>
-                              </div>
-                            )}
-
-                            <div className={`relative aspect-[3/4] rounded-2xl overflow-hidden border-2 border-rose-500 shadow-md bg-slate-50 ${!scannerPhoto ? "col-span-2 max-w-[220px] mx-auto" : ""}`}>
-                              <img 
-                                src={analysisImage} 
-                                alt="Generated fashion recommendation look" 
-                                referrerPolicy="no-referrer"
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-rose-950/90 via-rose-950/70 to-transparent p-1.5 text-center text-white">
-                                <span className="text-[9px] font-black block text-amber-200">አዲሱ ስታይል ✨</span>
-                                <span className="text-[7px] text-rose-200 block uppercase">New Style Look</span>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Thumbnails gallery for identity-locked style looks (Casual, Professional, Formal) */}
-                          {analysisImages.length > 1 && (
-                            <div className="space-y-1 text-center pt-1">
-                              <span className="text-[9px] text-slate-500 font-bold block">የስታይል ምርጫዎች (Identity-Locked Style Looks):</span>
-                              <div className="flex gap-2 justify-center overflow-x-auto py-1 px-1">
-                                {analysisImages.map((img, idx) => {
-                                  const lookLabels = ["Casual (ካዡዋል)", "Professional (ፕሮፌሽናል)", "Formal (ፎርማል)"];
-                                  const label = lookLabels[idx] || `Look #${idx + 1}`;
-                                  const isActive = analysisImage === img;
-                                  return (
-                                    <button
-                                      key={idx}
-                                      onClick={() => setAnalysisImage(img)}
-                                      className={`flex flex-col items-center group transition focus:outline-none`}
-                                    >
-                                      <div className={`w-14 h-18 rounded-xl overflow-hidden border-2 shrink-0 relative transition-all ${
-                                        isActive ? "border-rose-500 scale-105 shadow-md ring-2 ring-rose-200" : "border-slate-200 opacity-75 hover:opacity-100"
-                                      }`}>
-                                        <img src={img} alt={label} className="w-full h-full object-cover" referrerPolicy="no-referrer" />
-                                        <div className="absolute inset-x-0 bottom-0 bg-slate-950/75 py-0.5 text-center">
-                                          <span className="text-[7px] text-white font-bold block">{idx + 1}</span>
-                                        </div>
-                                      </div>
-                                      <span className={`text-[8px] font-bold mt-1 ${isActive ? "text-rose-600" : "text-slate-500 group-hover:text-slate-800"}`}>
-                                        {label.split(" ")[0]}
-                                      </span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
+                    <div className="flex-1 max-h-[460px] overflow-y-auto pr-1 text-slate-700 leading-relaxed text-xs space-y-4 bg-white border border-slate-100 rounded-2xl p-4 shadow-inner">
+                      
+                      {/* Expert Face & Body Posture Analysis Header Banner */}
+                      <div className="space-y-3 border-b border-rose-100 pb-3 mb-3">
+                        <div className="bg-gradient-to-r from-rose-950 to-slate-900 text-white rounded-2xl p-3.5 shadow-md flex items-center gap-3">
+                          {scannerPhoto && (
+                            <div className="w-14 h-14 rounded-xl overflow-hidden border-2 border-amber-300/80 shadow shrink-0 bg-slate-800">
+                              <img src={scannerPhoto} alt="Captured face" className="w-full h-full object-cover" />
                             </div>
                           )}
+                          <div className="space-y-0.5">
+                            <span className="text-[10px] text-amber-300 font-extrabold uppercase tracking-wider block">
+                              🔍 የፊትና የሰውነት ቅርፅ የባለሙያ መግለጫ (Expert Face & Posture Analysis)
+                            </span>
+                            <h4 className="text-xs font-black text-white leading-tight">
+                              የማኪ የስታይልና የባርቤሪ ባለሙያ ትንተና
+                            </h4>
+                          </div>
                         </div>
-                      )}
+
+                        {/* Customized Combination Intro Banner */}
+                        <div className="bg-rose-50/80 border border-rose-200/80 rounded-2xl p-3 space-y-2 text-left">
+                          <p className="text-[11px] text-rose-950 font-black leading-snug">
+                            {scannerGender === "female" 
+                              ? "✨ የፊትዎ ገፅታና የሰውነት አቋምዎ ከላይ በተተነተነው መሰረት፣ ለእርስዎ የሚስማማው የተሟላ የልብስ፣ የፀጉር፣ የሜካፕ፣ የጫማና የቦርሳ ቅንጅት (Clothing + Hair + Makeup + Shoes + Bag)፦"
+                              : "✨ የፊትዎ ገፅታና የሰውነት አቋምዎ ከላይ በተተነተነው መሰረት፣ ለእርስዎ የሚስማማው የተሟላ የልብስ፣ የፀጉር/የጺም፣ የጫማ፣ የእጅ ሰዓትና የቀበቶ ቅንጅት (Clothing + Hair/Beard + Shoes + Watch + Belt)፦"
+                            }
+                          </p>
+
+                          {/* Combination Element Badges */}
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {scannerGender === "female" ? (
+                              <>
+                                <span className="bg-white text-rose-800 border border-rose-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  👗 አልባሳት (Clothing Outfit)
+                                </span>
+                                <span className="bg-white text-purple-800 border border-purple-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  💇‍♀️ ፀጉር (Hairstyle)
+                                </span>
+                                <span className="bg-white text-pink-800 border border-pink-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  💄 ሜካፕ (Makeup Match)
+                                </span>
+                                <span className="bg-white text-amber-800 border border-amber-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  👠 ጫማ (Shoes / Footwear)
+                                </span>
+                                <span className="bg-white text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  👜 ቦርሳ (Matching Bag)
+                                </span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="bg-white text-slate-800 border border-slate-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  👔 አልባሳት (Suit & Jacket)
+                                </span>
+                                <span className="bg-white text-amber-800 border border-amber-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  💈 ፀጉርና ጺም (Haircut & Beard)
+                                </span>
+                                <span className="bg-white text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  👞 ጫማ (Leather Shoes)
+                                </span>
+                                <span className="bg-white text-sky-800 border border-sky-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  ⌚ የእጅ ሰዓት (Luxury Watch)
+                                </span>
+                                <span className="bg-white text-rose-800 border border-rose-200 px-2.5 py-1 rounded-full text-[10px] font-extrabold flex items-center gap-1 shadow-2xs">
+                                  👖 ቀበቶ (Leather Belt)
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Existing Wardrobe Callout Banner */}
+                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200/80 rounded-2xl p-3 text-left space-y-1">
+                          <div className="flex items-center gap-1.5 text-[11px] font-black text-amber-900">
+                            <span className="text-sm">💡</span>
+                            <span>የቁም ሳጥንዎ ልብሶች አጠቃቀም (Wear From Your Wardrobe)</span>
+                          </div>
+                          <p className="text-[10px] text-amber-800 leading-relaxed font-medium">
+                            እነዚህን የተመከሩ ስታይሎች አዲስ ልብስ ሳይገዙ በቤትዎ በሚገኙት ነባር ልብሶችዎ፣ ጫማዎችዎና ጌጣጌጦችዎ በቀላሉ ማዛመድ ይችላሉ!
+                          </p>
+                        </div>
+                      </div>
+
                       <SimpleMarkdownRenderer text={analysisResult} />
                     </div>
 
                     <div className="pt-3 border-t border-rose-100/80 flex flex-col gap-2">
+                      {/* Package usage progress bar */}
+                      <div className="bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-1.5 flex items-center justify-between text-[10px] font-extrabold text-slate-700">
+                        <span className="flex items-center gap-1">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                          <span>ፓኬጅዎ፦ {purchasedPackage === 'today' ? 'የቀን (10 ኮምቢኔሽን)' : purchasedPackage === 'weekly' ? 'የሳምንት (100 ኮምቢኔሽን)' : purchasedPackage === 'monthly' ? 'የወር (600 ኮምቢኔሽን)' : 'ነፃ የሙከራ (10 ኮምቢኔሽን)'}</span>
+                        </span>
+                        <span className="text-rose-600 font-black">
+                          ቀሪ ቅንጅቶች፦ {Math.max(0, currentLimit - generatedCount)} / {currentLimit}
+                        </span>
+                      </div>
+
                       <button
                         onClick={handleGenerateMoreStyle}
                         disabled={isGeneratingMore}
@@ -2029,17 +2072,12 @@ export default function App() {
                         {isGeneratingMore ? (
                           <>
                             <div className="w-4 h-4 rounded-full border-2 border-white/50 border-t-white animate-spin"></div>
-                            ተጨማሪ ስታይል በማዘጋጀት ላይ...
+                            ተጨማሪ ስታይል ቅንጅት በማዘጋጀት ላይ...
                           </>
                         ) : (
                           <>
                             <Sparkles className="w-4 h-4 text-amber-200 animate-pulse" />
-                            <span>
-                              {scannerGender === "female"
-                                ? "✨ ተጨማሪ የአሜሪካን ሞዴል ፀጉርና ፋሽን ስታይል አሳይ (More Styles)"
-                                : "✨ ተጨማሪ የባርቤሪና የአለባበስ ስታይል አሳይ (More Styles)"
-                              }
-                            </span>
+                            <span>✨ ተጨማሪ ስታይል ቅንጅቶች (More Style Combinations)</span>
                             <span className="bg-black/20 px-2 py-0.5 rounded-full text-[10px]">
                               ({Math.max(0, currentLimit - generatedCount)} ቀሪ)
                             </span>
@@ -2870,6 +2908,35 @@ export default function App() {
                 {/* STEP 1: SELECT PACKAGE */}
                 {paymentStep === "package" && (
                   <div className="space-y-4 animate-fade-in">
+                    
+                    {/* SaaS Style Makeover Transformation Showcase Card */}
+                    <div className="bg-gradient-to-br from-slate-900 via-rose-950 to-slate-900 p-4 rounded-2xl text-white border border-rose-800/40 shadow-xl space-y-2.5 relative overflow-hidden">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[9px] font-black uppercase tracking-wider bg-rose-500/30 text-rose-300 border border-rose-500/40 px-2 py-0.5 rounded-full flex items-center gap-1">
+                          <Sparkles className="w-3 h-3 text-amber-300 animate-pulse" />
+                          የስታይልና የፀጉር ትራንስፎርሜሽን (Makeover)
+                        </span>
+                        <span className="text-[9px] font-bold text-amber-300 bg-black/40 px-2 py-0.5 rounded-full border border-amber-300/30">
+                          🔥 3,400+ ተጠቃሚዎች
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 pt-1 text-center">
+                        <div className="bg-slate-950/70 p-2 rounded-xl border border-slate-800">
+                          <span className="text-[9px] font-bold text-slate-400 block uppercase">ከክፍያ በፊት (BEFORE)</span>
+                          <span className="text-[10px] font-extrabold text-slate-300 block mt-0.5">መደበኛና ያልተቃኘ ፀጉር / አልባሳት</span>
+                        </div>
+                        <div className="bg-rose-950/80 p-2 rounded-xl border border-rose-500/50">
+                          <span className="text-[9px] font-black text-rose-300 block uppercase">ከክፍያ በኋላ (AFTER)</span>
+                          <span className="text-[10px] font-black text-white block mt-0.5">በማኪ AI የተቃኘ ዘመናዊና ማራኪ ስታይል</span>
+                        </div>
+                      </div>
+
+                      <p className="text-[10px] text-rose-100 text-center leading-relaxed">
+                        ፓኬጅ በመግዛት በሰከንዶች ውስጥ የፊት ቅርፅዎን፣ የቆዳ ከለርዎንና የፀጉርዎን አይነት የሚስማማ ትንተና ያግኙ!
+                      </p>
+                    </div>
+
                     <div className="text-center space-y-1">
                       <h4 className="font-black text-slate-800 text-base">የምክር አገልግሎት ፓኬጅ ይምረጡ</h4>
                       <p className="text-[10px] text-slate-400">ለእርስዎ ፍላጎት የሚስማማውን ፓኬጅ መርጠው በቴሌብር ይክፈሉ</p>
@@ -2930,13 +2997,24 @@ export default function App() {
                           </div>
                           <div>
                             <span className="font-extrabold text-xs text-slate-800 block">የ1 ወር ስትራቴጂ (Monthly Strategy)</span>
-                            <span className="text-[10px] text-slate-400 block leading-tight">ለ30 ቀናት እስከ 3000 ፎቶዎች የሚዘጋጅበት</span>
+                            <span className="text-[10px] text-slate-400 block leading-tight">ለ30 ቀናት እስከ 600 ስታይል ቅንጅቶች የሚዘጋጅበት</span>
                           </div>
                         </div>
                         <div className="text-right">
                           <span className="text-sm font-black text-slate-900 block">300 Birr</span>
-                          <span className="text-[9px] font-bold text-rose-500 block">3000 ፎቶዎች</span>
+                          <span className="text-[9px] font-bold text-rose-500 block">600 ቅንጅቶች</span>
                         </div>
+                      </div>
+                    </div>
+
+                    {/* Money-Back Satisfaction Guarantee */}
+                    <div className="bg-emerald-50 border border-emerald-200/80 rounded-2xl p-3 flex items-start gap-2.5 text-emerald-950 shadow-sm">
+                      <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                      <div className="space-y-0.5 text-left">
+                        <span className="font-extrabold text-[11px] block text-emerald-900">100% የክፍያ ዋስትና (Satisfaction Guarantee)</span>
+                        <p className="text-[10px] text-emerald-800 leading-snug font-bold">
+                          በአገልግሎቱ ደስተኛ ካልሆኑ ብሩ ተመላሽ ይሆናል ወደ ባንክ አካውንቶ!
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -2954,9 +3032,26 @@ export default function App() {
                         <p>
                           እባክዎን የፓኬጁን ክፍያ <strong className="text-blue-950 text-xs font-black">{selectedPackage === "today" ? "50.00" : selectedPackage === "weekly" ? "100.00" : "300.00"} ብር</strong> ወደሚከተለው የቴሌብር ቁጥር ያስተላልፉ፡
                         </p>
-                        <div className="bg-white p-3 rounded-xl border border-blue-200/60 text-center space-y-1">
-                          <span className="text-[9px] text-slate-400 block font-bold">የቴሌብር ስልክ ቁጥር (Mobile Number)</span>
-                          <span className="text-lg font-black text-slate-900 select-all block tracking-wider">0966782412</span>
+                        <div className="bg-white p-3 rounded-xl border border-blue-200/60 text-center space-y-1.5">
+                          <div>
+                            <span className="text-[9px] text-slate-400 block font-bold">የተቀባይ ስም (Recipient Name)</span>
+                            <span className="text-sm font-black text-blue-950 block tracking-wide uppercase">TEKALIGH</span>
+                          </div>
+                          <div className="pt-1 border-t border-slate-100">
+                            <span className="text-[9px] text-slate-400 block font-bold">የቴሌብር ስልክ ቁጥር (Mobile Number)</span>
+                            <span className="text-lg font-black text-slate-900 select-all block tracking-wider">0966782412</span>
+                          </div>
+                        </div>
+
+                        {/* Money-back satisfaction guarantee badge */}
+                        <div className="bg-emerald-50 border border-emerald-200/80 rounded-xl p-3 flex items-start gap-2.5 text-emerald-950 shadow-sm">
+                          <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
+                          <div className="space-y-0.5 text-left">
+                            <span className="font-extrabold text-[11px] block text-emerald-900">100% የክፍያ ዋስትና (Satisfaction Guarantee)</span>
+                            <p className="text-[10px] text-emerald-800 leading-snug font-bold">
+                              በአገልግሎቱ ደስተኛ ካልሆኑ ብሩ ተመላሽ ይሆናል ወደ ባንክ አካውንቶ!
+                            </p>
+                          </div>
                         </div>
                         <p className="text-[10px] text-slate-500">
                           * በቴሌብር መተግበሪያ(telebirr App) ወይም በ <strong className="text-slate-800">*999#</strong> ተጠቅመው ገንዘብ ማስተላለፍ ይችላሉ።

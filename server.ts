@@ -8,9 +8,17 @@ import { MongoClient } from "mongodb";
 
 dotenv.config();
 
+// Process-level uncaught error protection for production deployments (Render.com)
+process.on("uncaughtException", (err) => {
+  console.error("[Server Critical] Uncaught Exception:", err);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("[Server Critical] Unhandled Rejection:", reason);
+});
+
 async function startServer() {
   const app = express();
-  const PORT = 3000;
+  const PORT = Number(process.env.PORT) || 3000;
 
   // Set up body parsing with high limit for base64 images
   app.use(express.json({ limit: "15mb" }));
@@ -31,64 +39,31 @@ async function startServer() {
     }
   });
 
-  // Helper to run generateContent with retries and model fallback to handle 503/transient errors
+  // Helper to run generateContent with retries and model fallback for lightning-fast responses
   async function callGeminiWithFallback(params: {
     contents: any;
     config?: any;
   }) {
     const modelsToTry = [
       "gemini-3.5-flash",
-      "gemini-flash-latest",
-      "gemini-3.1-flash-lite"
+      "gemini-3.1-flash-lite",
+      "gemini-flash-latest"
     ];
     let lastError: any = null;
 
     for (const modelName of modelsToTry) {
-      let attempts = 2; // Reduced to 2 to fail-over faster
-      for (let attempt = 1; attempt <= attempts; attempt++) {
-        try {
-          console.log(`[Gemini API] Requesting ${modelName} (Attempt ${attempt}/${attempts})...`);
-          const response = await ai.models.generateContent({
-            model: modelName,
-            contents: params.contents,
-            config: params.config,
-          });
-          return response;
-        } catch (error: any) {
-          lastError = error;
-          const status = error.status || (error.error && error.error.code) || 0;
-          const msg = error.message || (error.error && error.error.message) || "";
-          console.warn(`[Gemini API] ${modelName} failed on attempt ${attempt}:`, msg);
-          
-          // If the error is 503/UNAVAILABLE, 429/RESOURCE_EXHAUSTED, or 404/NOT_FOUND,
-          // don't keep retrying the same model. Fall back to the next model immediately!
-          const isUnavailable = 
-            status === 503 || 
-            status === 429 || 
-            status === 404 ||
-            msg.includes("503") || 
-            msg.includes("429") || 
-            msg.includes("404") || 
-            msg.includes("UNAVAILABLE") || 
-            msg.includes("RESOURCE_EXHAUSTED") ||
-            msg.includes("NOT_FOUND") ||
-            msg.includes("no longer available") ||
-            msg.includes("not found") ||
-            msg.includes("not supported") ||
-            msg.includes("high demand") ||
-            msg.includes("limit");
-
-          if (isUnavailable) {
-            console.warn(`[Gemini API] ${modelName} is unavailable, not found, or rate limited. Fast-falling back to next model...`);
-            break; // Break the attempt loop for this model and go to the next model in modelsToTry
-          }
-
-          if (attempt < attempts) {
-            const delayMs = attempt * 1000;
-            console.log(`[Gemini API] Retrying ${modelName} in ${delayMs}ms...`);
-            await new Promise((resolve) => setTimeout(resolve, delayMs));
-          }
-        }
+      try {
+        console.log(`[Gemini API] Requesting ${modelName}...`);
+        const response = await ai.models.generateContent({
+          model: modelName,
+          contents: params.contents,
+          config: params.config,
+        });
+        return response;
+      } catch (error: any) {
+        lastError = error;
+        const msg = error.message || (error.error && error.error.message) || "";
+        console.warn(`[Gemini API] ${modelName} notice:`, msg);
       }
     }
 
@@ -97,14 +72,18 @@ async function startServer() {
 
   // Lazy connection to MongoDB Atlas
   let mongoClient: MongoClient | null = null;
+  let mongoConnectionFailed = false;
   const mongoUri = process.env.MONGODB_URI;
 
   async function getMongoClient(): Promise<MongoClient | null> {
-    if (!mongoUri) return null;
+    if (!mongoUri || mongoConnectionFailed) return null;
     if (!mongoClient) {
       try {
         console.log("[MongoDB] Connecting to MongoDB Atlas...");
-        mongoClient = new MongoClient(mongoUri);
+        mongoClient = new MongoClient(mongoUri, {
+          serverSelectionTimeoutMS: 4000,
+          connectTimeoutMS: 5000
+        });
         await mongoClient.connect();
         console.log("[MongoDB] Successfully connected to MongoDB Atlas.");
         
@@ -120,9 +99,10 @@ async function startServer() {
         await usersCollection.createIndex({ txnId: 1 }, { unique: true });
         
         console.log("[MongoDB] Database indices verified successfully.");
-      } catch (err) {
-        console.error("[MongoDB] Connection or index verification failed:", err);
+      } catch (err: any) {
+        console.warn("[MongoDB] Connection or index verification failed (using local JSON DB fallback):", err?.message || err);
         mongoClient = null;
+        mongoConnectionFailed = true;
       }
     }
     return mongoClient;
@@ -227,23 +207,28 @@ Analyze the uploaded Telebirr transaction receipt screenshot, document (PDF), or
 
 Telebirr has three kinds of receipts/formats. You must auto-detect which one is being presented:
 1. DETAILED RECEIPT SCREENSHOT: A full-screen or detailed receipt containing Sender Name, Recipient Number, Recipient Name, Transaction Amount, Transaction ID, and Date/Time.
-2. DETAILED OFFICIAL PDF: An official Telebirr Transaction receipt in PDF format (often downloaded from info.ethiotelecom.et). It contains structured fields such as "Payer Name / የከፋይ ስም" (e.g. FIREALEM TAKELIGN MARU), "Payer telebirr no.", "Credited party name / የገንዘብ ተቀባይ ስም" or "Transaction To", "Settled Amount / የተከፈለው መጠን" (e.g., 50 Birr, 70 Birr, 100 Birr, or 300 Birr), "Total Paid Amount / ጠቅላላ የተከፈለው መጠን", "Invoice No. / የክፍያ ቁጥር" or "Transaction Number", "Payment date / የክፍያ ቀን", etc.
+2. DETAILED OFFICIAL PDF: An official Telebirr Transaction receipt in PDF format (often downloaded from info.ethiotelecom.et). It contains structured fields such as "Payer Name / የከፋይ ስም", "Payer telebirr no.", "Credited party name / የገንዘብ ተቀባይ ስም" or "Transaction To" (e.g., TEKALIGH), "Settled Amount / የተከፈለው መጠን" (e.g., 50 Birr, 100 Birr, or 300 Birr), "Total Paid Amount / ጠቅላላ የተከፈለው መጠን", "Invoice No. / የክፍያ ቁጥር" or "Transaction Number", "Payment date / የክፍያ ቀን", etc.
 3. SIMPLE RECEIPT SCREENSHOT: A simple transfer completion success overlay, modal, simplified transfer list, or quick confirmation screen/SMS screenshot. It might only display the recipient's name and a Transaction ID, but might omit or crop the sender's name and the transaction amount.
 
-Apply the following verification rules strictly:
+STRICT MANDATORY RECIPIENT VERIFICATION RULES:
+- CRITICAL REQUIREMENT: The Recipient / Credited Party / "Transaction To" name MUST BE STRICTLY AND ONLY "TEKALIGH" (or phone "0966782412"). NO OTHER RECIPIENT NAME IS ALLOWED!
+- STRICT REJECTION RULE: If the payment receipt shows ANY OTHER RECIPIENT NAME such as "FIREALEM", "TEKALIGN", "ZERIHUN", or any other person that is NOT strictly "TEKALIGH", you MUST IMMEDIATELY MARK 'isValid' as FALSE!
+- Explanation for invalid recipient: Set 'explanation' in Amharic explaining that the payment recipient name on the receipt is incorrect (e.g. "የተላከበት የተቀባይ ስም TEKALIGH ብቻ መሆን አለበት። እባክዎን ወደ ትክክለኛው የተቀባይ ስም TEKALIGH ያስተላለፉበትን ደረሰኝ ይጫኑ።").
+
+Apply the following verification steps strictly:
 
 - If it is a DETAILED RECEIPT (Screenshot or Official PDF):
-  1. Recipient or Account check: Must involve the merchant account. This means either "FIREALEM", "FIREALEM TAKELIGN MARU", "0991490243", or "Zerihun Muluneh Yomgalu" (the registered merchant name, associated recipient, or transaction representative) must be present in the document either as the payer, credited party, recipient, or sender.
-  2. Amount check: Must be at least ${expectedAmount} ETB (Birr) (i.e. >= ${expectedAmount} ETB). If they paid more, that is acceptable! (Look at the "Settled Amount", "Total Paid Amount", "Transaction Amount", or equivalent fields).
-  3. Sender name check: Verify if the sender/payer name shown on the receipt semantically matches the claimed sender name: "${senderName}". (Spelling can vary slightly between English and Amharic, so do a flexible, smart comparison e.g., "ASTER BEKELE" or "አስቴር በከለ" matches "Aster" or "አስቴር" or "Aster Bekele"). If there is an official PDF, accept any payer name as long as the transaction is a valid Telebirr transfer involving the merchant details.
+  1. Recipient check: Must be paid ONLY to TEKALIGH (or 0966782412). If paid to FIREALEM, TEKALIGN, or anyone else, isValid = false.
+  2. Amount check: Must be at least ${expectedAmount} ETB (Birr) (i.e. >= ${expectedAmount} ETB).
+  3. Sender name check: Verify if the sender/payer name shown on the receipt semantically matches the claimed sender name: "${senderName}". (Spelling can vary slightly between English and Amharic, e.g., "ASTER BEKELE" or "አስቴር በከለ" matches "Aster Bekele").
 
 - If it is a SIMPLE RECEIPT:
-  1. Recipient check: You must check ONLY that the recipient name is EXACTLY "FIREALEM" or "FIREALEM TAKELIGN MARU" or "Zerihun Muluneh Yomgalu" (strictly case-sensitive, in English or equivalent spelling variations, e.g. do NOT accept initials, but accept standard representations).
-  2. Amount and Sender checks: For a simple receipt, ignore deviations or absence of the sender name or transaction amount (since simple receipts might not display these fields). Simply set 'isValid' to true if the recipient is correct and a valid Transaction ID exists.
+  1. Recipient check: Must strictly be paid ONLY to TEKALIGH (or 0966782412). Reject any receipt paid to FIREALEM, TEKALIGN, or any other recipient name!
+  2. Amount and Sender checks: For a simple receipt, if sender name or amount are absent, set isValid to true ONLY IF recipient is TEKALIGH and a valid Transaction ID exists.
 
 In all cases:
 1. Extract the Transaction ID/Reference Code (usually starting with letters like FT or DG, like FT26A189... or DGE4TVRXN6, etc.).
-2. Generate a JSON response matching the required schema. Write the "explanation" field in polite, beautiful, encouraging Amharic (አማርኛ).
+2. Generate a JSON response matching the required schema. Write the "explanation" field in polite, authoritative Amharic (አማርኛ).
 `;
 
       const imagePart = {
@@ -282,7 +267,7 @@ In all cases:
               },
               isRecipientCorrect: { 
                 type: Type.BOOLEAN,
-                description: "True if the recipient was verified to be FIREALEM (or 0991490243)."
+                description: "True if the recipient was verified to be TEKALIGH (or 0966782412)."
               },
               explanation: { 
                 type: Type.STRING, 
@@ -299,7 +284,8 @@ In all cases:
         throw new Error("ማኪ ደረሰኝዎን ማንበብ አልቻለችም፤ እባክዎን ጥራት ያለው ፎቶ እንደገና ይጫኑ።");
       }
 
-      const auditResult = JSON.parse(resultText.trim());
+      const cleanJson = resultText.replace(/^```(json)?\s*/i, "").replace(/```\s*$/i, "").trim();
+      const auditResult = JSON.parse(cleanJson);
 
       // Prevent duplicate transaction IDs and persist to database
       if (auditResult.isValid && auditResult.extractedTxnId) {
@@ -311,9 +297,6 @@ In all cases:
         if (client) {
           try {
             const db = client.db();
-            // Delete expired items first
-            await db.collection("users").deleteMany({ expiresAt: { $lt: new Date() } });
-            
             const existingUser = await db.collection("users").findOne({ txnId: txn });
             if (existingUser) {
               isDuplicate = true;
@@ -345,8 +328,8 @@ In all cases:
           const expiresAt = new Date();
           expiresAt.setDate(expiresAt.getDate() + days);
 
-          // Register in database
-          await registerTransactionInDbExtended({
+          // Non-blocking background registration in DB
+          registerTransactionInDbExtended({
             txnId: txn,
             senderName: senderName || "Guest",
             packageType: pkgType,
@@ -356,7 +339,7 @@ In all cases:
             createdAt: new Date(),
             verifiedSender: auditResult.extractedSenderName || senderName || "Guest",
             status: "active"
-          });
+          }).catch(err => console.error("[Database] Async registration error:", err));
         }
       }
 
@@ -376,7 +359,7 @@ In all cases:
         });
       }
 
-      const { image, packageType, gender, scanMode, txnId, isMore } = req.body;
+      const { image, packageType, gender, scanMode, txnId, senderName, isMore } = req.body;
       if (!image) {
         return res.status(400).json({ error: "Missing image data. Please upload a clear photo." });
       }
@@ -387,42 +370,75 @@ In all cases:
       const isFemale = gender === "female";
       const isUpperBody = scanMode === "upper_body";
 
+      // Query MongoDB Atlas for user profile and previous recommendations
+      let userContextNote = "";
+      if (txnId || senderName) {
+        try {
+          const client = await getMongoClient();
+          if (client) {
+            const query: any = {};
+            if (txnId) query.txnId = String(txnId).toUpperCase().trim();
+            else if (senderName) query.senderName = String(senderName).trim();
+
+            const userDoc = await client.db().collection("users").findOne(query);
+            if (userDoc) {
+              userContextNote = `
+[MONGODB ATLAS STORED USER PROFILE & HISTORY]:
+User Name: ${userDoc.senderName || senderName || "Registered Member"}
+Registered Package: ${userDoc.packageType || packageType}
+Registration Date: ${userDoc.createdAt}
+Previous Consultation History: ${userDoc.lastRecommendation ? "User has previous recommendation history saved in MongoDB. Build upon their previous profile seamlessly." : "First consultation for this active package."}
+`;
+            }
+          }
+        } catch (dbErr) {
+          console.warn("[MongoDB] Error checking user context:", dbErr);
+        }
+      }
+
       let prompt = `
 You are "ማኪ" (Maki), an elite Ethiopian master fashion designer, clothing consultant, and hair barber/stylist expert from Addis Ababa.
-The user uploaded their photo for a personalized fashion and hair styling analysis.
+The user uploaded their photo for a personalized expert face, body posture, fashion, and hair styling analysis.
+${userContextNote}
 Gender: ${isFemale ? "Female (ሴት)" : "Male (ወንድ)"}.
 Scan Mode: ${isUpperBody ? "Upper Body (Hair Focus)" : "Whole Body (Outfit & Hair Focus)"}.
 Package: ${packageType || "today"}.
-${isMore ? "This is a request for MORE additional fashion outfits and hair styles (ተጨማሪ ስታይሎች)." : "This is the initial fast style analysis."}
+${isMore ? "This is a request for MORE additional fashion outfits and hair combinations (ተጨማሪ ስታይል ቅንጅቶች)." : "This is the initial fast style analysis."}
 
-CRITICAL MANDATORY INSTRUCTIONS ON USER FACIAL IDENTITY & POSTURE:
-1. Perform a STRICT IDENTITY LOCK on the user's face (eyes, nose, mouth, smile, facial structure, skin tone, unique features).
-2. The user's exact facial identity MUST be preserved across all recommended looks. Only modify the hairstyle, clothing, outfit, and posture.
-3. ${isFemale ? `
-FOR FEMALE CLIENTS:
-- Analyze her posture, body build, and natural skin tone.
-- Recommend 3 distinct styling looks:
-  1. Casual Look: Modern relaxed outfit (e.g., stylish denim jacket/chic streetwear) with a fresh hairstyle (e.g., shoulder-length bob or soft waves).
-  2. Professional Look: Tailored executive outfit (e.g., navy blue blazer or luxury business suit) with a sleek hairstyle (e.g., low ponytail or polished bun).
-  3. Formal Look: Elegant evening outfit (e.g., emerald green silk gown or high-fashion Habesha fusion) with glamorous flowing waves or intricate braids.
-- Detail why each specific color palette and style elevates her look.
-` : `
-FOR MALE CLIENTS:
-- Act as a master barber and executive tailor expert.
-- Analyze his jawline, forehead, and body posture.
-- Recommend 3 distinct styling looks:
-  1. Casual Look: Modern casual streetwear (e.g., leather jacket or crisp fitted tee) with a texturized crop/afro curls haircut.
-  2. Professional Look: Tailored executive suit or sharp blazer with a crisp lineup and high-skin fade haircut.
-  3. Formal Look: High-fashion formal tuxedo or luxury cultural suit vest with a polished beard trim and sharp taper cut.
-`}
+CRITICAL MANDATORY INSTRUCTIONS FOR ANALYSIS & RECOMMENDATIONS:
 
-Structure your response in warm, encouraging, highly professional AMHARIC (አማርኛ) markdown with clear headings for Casual (ካዡዋል), Professional (ፕሮፌሽናል), and Formal (ፎርማል) looks.
+1. SECTION 1: EXPERT FACE & BODY POSTURE ANALYSIS (~500 CHARACTERS):
+   Write a comprehensive, highly detailed ~500 character expert evaluation in Amharic (አማርኛ) titled "🔍 የፊትና የሰውነት ቅርፅ የባለሙያ መግለጫ (Expert Face & Posture Analysis)":
+   - Detailed Facial Analysis: Evaluate their exact face shape (oval/round/diamond/square/heart), cheekbone structure, jawline definition, forehead width, eyes, nose, and skin undertone.
+   - Detailed Body Posture Analysis: Evaluate their shoulder alignment, posture stance, neck length, upper body proportions, and overall physical balance.
 
-For the "imagenPrompts" array JSON field:
-Provide an array of 3 hyper-detailed, photorealistic English prompts for Imagen 3:
-- Prompt 1 (Casual Look): "STRICT FACIAL IDENTITY LOCK preserved from input photo. Exact facial features, eyes, smile, skin tone intact. Wearing modern casual clothing outfit (${isFemale ? "stylish denim jacket and casual streetwear with texturized shoulder-length bob hairstyle" : "chic casual jacket and fitted tee with texturized haircut"}), 8k resolution studio fashion portrait, photorealistic".
-- Prompt 2 (Professional Look): "STRICT FACIAL IDENTITY LOCK preserved from input photo. Exact facial features, eyes, smile, skin tone intact. Wearing executive professional outfit (${isFemale ? "tailored navy blue business blazer with sleek low ponytail hairstyle" : "tailored dark executive suit with sharp skin fade barber haircut"}), 8k resolution studio fashion portrait, photorealistic".
-- Prompt 3 (Formal Look): "STRICT FACIAL IDENTITY LOCK preserved from input photo. Exact facial features, eyes, smile, skin tone intact. Wearing high-fashion formal evening outfit (${isFemale ? "emerald silk evening gown with glamorous flowing waves hairstyle" : "luxurious formal tuxedo with crisp lineup haircut"}), 8k resolution studio fashion portrait, photorealistic".
+2. SECTION 2: TAILORED STYLE COMBINATIONS BASED ON ANALYSIS:
+   Begin with the exact bridge phrase:
+   "የፊትዎ ገፅታና የሰውነት አቋምዎ ከላይ በተተነተነው መሰረት፣ ለእርስዎ የሚስማማው የተሟላ የፋሽን፣ የፀጉርና የአካሰሰሪ ቅንጅት (Tailored Combinations) እነሆ፦"
+
+   ${isFemale ? `
+   FOR FEMALE CLIENTS, EVERY COMBINATION MUST SPECIFICALLY INCLUDE ALL 5 ELEMENTS:
+   1. 👗 አልባሳት (Clothing Outfit): Recommended dress, suit, or outfit cut to complement her body shape.
+   2. 💇‍♀️ የፀጉር ስታይል (Hairstyle): Haircut or styling that flatters her face shape.
+   3. 💄 የሜካፕ ቅንጅት (Makeup Match): Foundation tone (🧴 Base), Eyeliner style (👁️ Eyes), Lipstick shade (💄 Lips), and Blush (✨ Glow).
+   4. 👠 ጫማ (Shoes / Heels): Complementary footwear style and heel type.
+   5. 👜 ቦርሳ (Handbag / Bag): Matching bag style, size, and material.
+   ` : `
+   FOR MALE CLIENTS, EVERY COMBINATION MUST SPECIFICALLY INCLUDE ALL 5 ELEMENTS:
+   1. 👔 አልባሳት (Clothing Outfit): Recommended suit, jacket, or casual wear for his frame and posture.
+   2. 💈 የፀጉርና የጺም ስታይል (Haircut & Beard Grooming): Barber cut (fade/taper/lineup) and beard shaping for his jawline.
+   3. 👞 ጫማ (Shoes / Footwear): Leather dress shoes, boots, or sneakers.
+   4. ⌚ የእጅ ሰዓት (Watch / Timepiece): Classic, executive, or luxury watch style.
+   5. 👖 ቀበቶ (Belt / Leather Belt): Matching leather belt color and buckle type.
+   `}
+
+3. PROVIDE 3 DISTINCT STYLING COMBINATIONS:
+   - Casual Look (ካዡዋል ቅንጅት)
+   - Executive / Professional Look (ፕሮፌሽናል ቅንጅት)
+   - Formal Evening Look (ፎርማል / የምሽት ቅንጅት)
+
+Include tips on how to assemble these looks using existing wardrobe items.
+Structure the entire output in clear, beautifully formatted Amharic markdown.
 `;
 
       const imagePart = {
@@ -463,7 +479,8 @@ Provide an array of 3 hyper-detailed, photorealistic English prompts for Imagen 
         throw new Error("ማኪ የፎቶ ትንተናውን ማከናወን አልቻለችም፤ እባክዎን ጥራት ያለው ፎቶ እንደገና ይጫኑ።");
       }
 
-      const parsedResult = JSON.parse(resultText.trim());
+      const cleanJson = resultText.replace(/^```(json)?\s*/i, "").replace(/```\s*$/i, "").trim();
+      const parsedResult = JSON.parse(cleanJson);
       const recText = parsedResult.recommendationText || "";
       const primaryPrompt = parsedResult.imagenPrompt || "";
       const promptList: string[] = (parsedResult.imagenPrompts && parsedResult.imagenPrompts.length > 0)
@@ -471,30 +488,42 @@ Provide an array of 3 hyper-detailed, photorealistic English prompts for Imagen 
         : [primaryPrompt];
 
       const generatedImages: string[] = [];
+      const imageModelsToTry = [
+        "gemini-3.1-flash-lite-image",
+        "gemini-3.1-flash-image"
+      ];
 
-      // Generate images sequentially for each prompt to maximize consistency
+      // Generate style look previews using supported Gemini image models
       for (const promptStr of promptList) {
         if (!promptStr) continue;
-        try {
-          console.log(`[Imagen] Generating style preview with prompt: "${promptStr.substring(0, 80)}..."`);
-          const imageResponse = await ai.models.generateImages({
-            model: "imagen-3.0-generate-002",
-            prompt: promptStr,
-            config: {
-              numberOfImages: 1,
-              outputMimeType: "image/jpeg",
-              aspectRatio: "3:4"
-            }
-          });
+        let generatedForPrompt = false;
 
-          if (imageResponse && imageResponse.generatedImages && imageResponse.generatedImages.length > 0) {
-            for (const imgObj of imageResponse.generatedImages) {
-              const imgBytes = imgObj.image.imageBytes;
-              generatedImages.push(`data:image/jpeg;base64,${imgBytes}`);
+        for (const imgModel of imageModelsToTry) {
+          if (generatedForPrompt) break;
+          try {
+            console.log(`[ImageGen] Generating style preview with model ${imgModel}...`);
+            const imgResponse = await ai.models.generateContent({
+              model: imgModel,
+              contents: promptStr,
+              config: {
+                imageConfig: {
+                  aspectRatio: "3:4"
+                }
+              }
+            });
+
+            const parts = imgResponse.candidates?.[0]?.content?.parts || [];
+            for (const part of parts) {
+              if (part.inlineData && part.inlineData.data) {
+                const mime = part.inlineData.mimeType || "image/jpeg";
+                generatedImages.push(`data:${mime};base64,${part.inlineData.data}`);
+                generatedForPrompt = true;
+                break;
+              }
             }
+          } catch (imgError: any) {
+            console.log(`[ImageGen] Model ${imgModel} info:`, imgError?.message || "Using curated style fallback");
           }
-        } catch (imgError: any) {
-          console.warn("[Imagen] Failed to generate image via Imagen 3:", imgError.message || imgError);
         }
       }
 
@@ -513,6 +542,27 @@ Provide an array of 3 hyper-detailed, photorealistic English prompts for Imagen 
               : "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=600"
           );
         }
+      }
+
+      // Asynchronously record consultation history in MongoDB Atlas
+      if (txnId || senderName) {
+        getMongoClient().then(client => {
+          if (client) {
+            const query: any = {};
+            if (txnId) query.txnId = String(txnId).toUpperCase().trim();
+            else if (senderName) query.senderName = String(senderName).trim();
+
+            client.db().collection("users").updateOne(
+              query,
+              { 
+                $set: { 
+                  lastRecommendation: recText.substring(0, 1000), 
+                  lastAnalyzedAt: new Date() 
+                } 
+              }
+            ).catch(err => console.error("[MongoDB] History save error:", err));
+          }
+        }).catch(err => console.error("[MongoDB] Client error:", err));
       }
 
       res.json({
@@ -537,7 +587,12 @@ Provide an array of 3 hyper-detailed, photorealistic English prompts for Imagen 
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
     app.get("*", (req: express.Request, res: express.Response) => {
-      res.sendFile(path.join(distPath, "index.html"));
+      const indexPath = path.join(distPath, "index.html");
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(500).send("<h1>App Building in Progress</h1><p>Please wait a moment and refresh the page.</p>");
+      }
     });
   }
 
